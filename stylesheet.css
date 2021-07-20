@@ -44,6 +44,17 @@ select {
     border-radius:5px;
 }
 
+.delete {
+    width:30px;
+    height:30px;
+    border-radius:2px;
+    border-width:0px;
+    background-color:rgba(243, 138, 19, 0.1);
+}
+
+.delete:hover{
+    background-color:rgba(243, 138, 19, 0.3);
+}
 
 .sidenav {
     height: 100%; /* 100% Full-height */
