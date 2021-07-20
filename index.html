@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Your Workplace</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link href="./stylesheet.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light p-3">
+        <a class="navbar-brand" href="index.html" style="font-size: 1.3rem; font-weight:400;" >
+            <img src="./UI/icon.svg" alt="" width="60" height="60" class="d-inline-block align-text-middle mx-2">
+            Plan Your Workplace
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Setting <span class="sr-only"></span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">About</a>
+            </li>
+
+          </ul>
+        </div>
+      </nav>
+     
+
+      
+    <div class="container-fluid">
+        <div class="row">
+
+            <!--LEFT SIDE: intro, input-->
+            <div class="col-md-6 bg-light py-4 px-5">
+                <!--
+                <p>
+                    PLAN YOUR WORKPLACE is a tool designed for managers and companies to 
+                    plan the capacity of their workplace in the new ways of working moving 
+                    forward in the post pandenmic world. 
+                </p> -->
+                <p>
+                    PLAN YOUR WORKPLACE helps you plan for the workplace capacity by simulating
+                    daily attendence.
+                </p>
+                <h3>
+                    Let's add your team... 
+                </h3> 
+
+
+                <!--add one team-->
+                <div class="p-4 my-3" id="addOneTeam">
+                    <div class="form-group">
+                        <!-- <label for="inputName">Department/Team Name</label> -->
+                        <input type="text" class="form-control" id="inputName" placeholder="Department/Team Name">
+                    </div>
+                    <div class="form-group my-2">
+                        <!-- <label for="inputSize">Number of employees</label> -->
+                        <input type="number" class="form-control" id="inputSize" placeholder="Number of Employees">
+                    </div>
+                    
+                    <div class="form-group">
+                        <!-- <label class="mr-sm-2" for="inputNumDays">Number of days in office</label> -->
+                        <select class="custom-select mr-sm-2" id="inputNumDays">
+                        <option selected>Number of Days</option>
+                        <option value="1">1 day</option>
+                        <option value="2">2 days</option>
+                        <option value="3">3 days</option>
+                        <option value="4">4 days</option>
+                        <option value="5">5 days</option>
+                        </select>
+
+                        <select class="custom-select mr-sm-2" id="inputFrequency">
+                        <option selected>every week</option>
+                        <option>every month</option>
+                        <option>quarterly</option>
+                        </select>
+                    </div>
+                    <!-- remember my preference check box
+                    <div class="custom-control custom-checkbox mr-sm-2">
+                        <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
+                        <label class="custom-control-label" for="customControlAutosizing">Remember my preference</label>
+                    </div>
+                    -->
+                    <div>
+                        <button type="submit" class="btn mt-3 addteam">Add</button>      
+                    </div>                
+                </div>
+
+                <!--advanced settings: weight settings-->
+                <button class="btn mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    <span style="font-weight:500;text-decoration: underline;">+ Advanced Settings</span>
+                </button>
+                <div class="collapse" id="collapseExample">
+                    <div class="my-1">
+                        <p>Adjust weights below to change the odds of coming in the office on a particular day.
+                            The numbers must add up to 100. The default settings assume equal chance of coming 
+                            in for the workdays. (20% for each day)
+                        </p>
+                        <div class="row">
+                            <label for="weightMonday" class="col-sm-3 col-form-label">Monday</label>
+                            <div class="col-sm-5">
+                                <input type="range" class="form-range weightSlider" id="weightMonday" min="0" max="100" step="10" value="20" placeholder="col-form-label">
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control weightNumber" id="weightMonday" min="0" max="100" step="10" value="20" placeholder="%">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="weightTuesday" class="col-sm-3 col-form-label">Tuesday</label>
+                            <div class="col-sm-5">
+                                <input type="range" class="form-range weightSlider" id="weightTuesday" min="0" max="100" step="10" value="20" placeholder="col-form-label">
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control weightNumber" id="weightTuesday" min="0" max="100" step="10" value="20" placeholder="%">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="weightWednesday" class="col-sm-3 col-form-label">Wednesday</label>
+                            <div class="col-sm-5">
+                                <input type="range" class="form-range weightSlider" id="weightWednesday" min="0" max="100" step="10" value="20" placeholder="col-form-label">
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control weightNumber" id="weightWednesday" min="0" max="100" step="10" value="20" placeholder="%">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="weightThursday" class="col-sm-3 col-form-label">Thursday</label>
+                            <div class="col-sm-5">
+                                <input type="range" class="form-range weightSlider" id="weightThursday" min="0" max="100" step="10" value="20" placeholder="col-form-label">
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control weightNumber" id="weightThursday" min="0" max="100" step="10" value="20" placeholder="%">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="weightFriday" class="col-sm-3 col-form-label">Friday</label>
+                            <div class="col-sm-5">
+                                <input type="range" class="form-range weightSlider" id="weightFriday" min="0" max="100" step="10" value="20" placeholder="col-form-label">
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control weightNumber" id="weightFriday" min="0" max="100" step="10" value="20" placeholder="%">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="warning">
+                        The sum of the chances should equal to 100%.
+                    </div>
+                    <div class="row">
+                        <label class="col-auto" for="inputNumSimulation">Number of Simulations</label>
+                        <!--need some attention on formatting-->
+                        <input class="col-auto" type="number" class="form-control" id="inputNumSimulation" min="1" max="1000" step="1" value="100">
+                    </div>
+                    
+                    <div class="mt-4">
+                    <button type="submit" class="btn btn-primary" id="btn_update">Update</button>  
+                    <button type="submit" class="btn" id='btn_setToDefault'>Set to default</button>
+                    </div>
+                </div>
+
+                 <!--run simulation button-->
+                 <div class="d-grid gap-2 col-6 mt-4 mx-auto">
+                    <button type="submit" id="runSimulation" class="btn btn-primary">Run Simulation</button>      
+                </div> 
+
+                <!--team info section-->
+                <div class="row my-5" id="teamInfoSection">
+                    <h3>Your Teams</h3>
+                </div>
+
+            </div>
+
+            <!--RIGHT SIDE: results-->
+            <div class="col-md-6 pt-5 px-5">
+
+                <canvas id="simChart" width="300" height="200"></canvas>
+                <canvas id="statChart" width="300" height="200"></canvas>
+
+                <div id="MonChart" width="400" height="200"></div>
+                <div id="TueChart" width="400" height="200"></div>
+                <div id="WedChart" width="400" height="200"></div>
+                <div id="ThuChart" width="400" height="200"></div>
+                <div id="FriChart" width="400" height="200"></div>
+                <!--
+                <p>
+                    Estimated attendence on Monday is <span>xx</span>.<br>
+                    Estimated attendence on Tuesday is <span>xx</span>.<br>
+                    Estimated attendence on Wednesday is <span>xx</span>.<br>
+                    Estimated attendence on Thursday is <span>xx</span>.<br>
+                    Estimated attendence on Friday is <span>xx</span>.<br>
+                </p>
+                <p>
+                    Common Questions:
+
+                    + What does “exactly”, “up to” and “at least” mean?
+                    + How does it work?
+                    + What does the result mean?
+                    
+
+                </p> 
+                -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="./mainscript.js"></script>
+     <!-- Bootstrap JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <!-- chart.js -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.1/chart.min.js" integrity="sha512-5vwN8yor2fFT9pgPS9p9R7AszYaNn0LkQElTXIsZFCL7ucT8zDCAqlQXDdaqgA1mZP47hdvztBMsIoFxq/FyyQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.2.0.min.js"></script>
+    </body>
+</html>

@@ -1,0 +1,83 @@
+body {
+
+}
+
+h3 {
+    font-size:1.2rem;
+    font-weight:700;
+
+}
+
+h6 {
+    font-size: 0.9rem;
+    color:rgb(50,50,50);
+}
+
+#warning {
+    visibility: hidden;
+    font-size: 0.9rem;
+    color: orangered;
+}
+
+
+#addOneTeam {
+    /*background-color:rgb(240, 240, 232);*/
+    background-color:rgb(248, 238, 227);
+    border-style:solid;
+    border-width:0px;
+    border-radius:10px;
+    max-width:500px;
+    margin-left:auto;
+    margin-right:auto;
+
+}
+
+.btn.addteam{
+    border-width:0px;
+    background:linear-gradient(217deg, rgba(255, 179, 38, 0.8), rgba(255, 127, 7, 0.897));
+}
+
+select {
+    color:rgb(100,100,100);
+    padding:10px;
+    border-color:rgb(200,200,200);
+    border-radius:5px;
+}
+
+
+.sidenav {
+    height: 100%; /* 100% Full-height */
+    width: 0; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    background-color: #111; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+  }
+
+  .teamInfo {
+      font-size:0.9rem;
+      border-radius:5px;
+      padding-top:0.8rem;
+      padding-bottom:0.5rem;
+      border-bottom:1px solid rgba(200,200,200,0.8);
+  }
+
+  .teamInfo:hover {
+      background-color:rgba(248, 238, 227, 0.4);
+      
+  }
+
+  #btn_setToDefault {
+      border-radius:5px;
+      border: 1px solid rgb(200,200,200);
+  }
+
+  #runSimulation {
+    border-width:0px;
+    background:linear-gradient(145deg, rgba(243, 138, 19, 0.918), rgba(180, 12, 223, 0.897));
+
+  }
