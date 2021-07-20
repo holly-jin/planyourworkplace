@@ -341,23 +341,50 @@ function runAllSim(){
 
 
 
-    //plot the bar chart of average daily attendence
-    var trace = {
+    //plot the bar chart of average daily attendence - Monday
+    var trace1 = {
         x: entriesMonday,
         type: 'histogram',
+        marker: {
+            color: "rgba(255, 100, 102, 0.7)", 
+             line: {
+              color:  "rgba(255, 100, 102, 1)", 
+              width: 1
+            }
+          },  
+        opacity: 0.5, 
       };
-    var data = [trace];
-    Plotly.newPlot('MonChart', data);
+      var layout1 = {
+        //bargap: 0.01, 
+        //bargroupgap: 0.2, 
+        //barmode: "overlay", 
+        title: "Simulation Result Histogram - Monday", 
+        xaxis: {title: "Value"}, 
+        yaxis: {title: "Count"}
+      };
+    var data1 = [trace1];
+    Plotly.newPlot('MonChart', data1,layout1);
 
     //Tuesday histogram
-    var trace = {
+    var trace2 = {
         x: entriesTuesday,
         type: 'histogram',
+        marker: {
+            color: "rgba(255, 100, 102, 0.7)", 
+             line: {
+              color:  "rgba(255, 100, 102, 1)", 
+              width: 1
+            }
+          },  
+        opacity: 0.5, 
       };
-    var data = [trace];
-    Plotly.newPlot('TueChart', data);
-
-    
+      var layout2 = {
+        title: "Simulation Result Histogram - Tuesday", 
+        xaxis: {title: "Value"}, 
+        yaxis: {title: "Count"}
+      };
+    var data2 = [trace2];
+    Plotly.newPlot('TueChart', data2,layout2);    
 
 }
 
