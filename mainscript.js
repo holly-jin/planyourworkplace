@@ -138,7 +138,8 @@ function createTeam(){
 //master function for running the simulation
 function runAllSim(){
     simNum = 0;
-    const simResultDetailed = [];
+    const simResultDetailed = {
+        Monday:[], Tuesday:[], Wednesday:[], Thursday:[], Friday:[]};
     const simResult ={
         Monday:0, Tuesday:0, Wednesday:0, Thursday:0, Friday:0
     }
@@ -154,10 +155,21 @@ function runAllSim(){
         simResult.Thursday+=oneSim.Thursday;
         simResult.Friday+=oneSim.Friday;
 
-        //accumulate the detailed result entry for SimResultDetailed (detailed count by team)
-        const newentries = output.resultbyteam;
-        simResultDetailed.push.apply(simResultDetailed,newentries);
+        //accumulate the detailed result entry for SimResultDetailed (detailed count by day)
+        
+        simResultDetailed.Monday.push(oneSim.Monday);
+        simResultDetailed.Tuesday.push(oneSim.Tuesday);
+        simResultDetailed.Wednesday.push(oneSim.Wednesday);
+        simResultDetailed.Thursday.push(oneSim.Thursday);
+        simResultDetailed.Friday.push(oneSim.Friday);
+
+        //simResultDetailed.Monday.push(oneSim.Monday);
+        //simResultDetailed.Tuesday.push.apply(simResultDetailed.Tuesday,oneSim.Tuesday);
+        //simResultDetailed.Wednesday.push.apply(simResultDetailed.Wednesday,oneSim.Wednesday);
+        //simResultDetailed.Thursday.push.apply(simResultDetailed.Thursday,oneSim.Thursday);
+        //simResultDetailed.Friday.push.apply(simResultDetailed.Friday,oneSim.Friday);
     }
+
     //take the average of the simulation results
     simResult.Monday=Math.floor(simResult.Monday/numSimulation);
     simResult.Tuesday=Math.floor(simResult.Tuesday/numSimulation);
@@ -197,35 +209,16 @@ function runAllSim(){
     chart = new Chart(ctx, chartData);
 
     //create an array of simulation entries for each day
-    const entriesMonday = [];
-    const entriesTuesday = [];
-    const entriesWednesday = [];
-    const entriesThursday = [];
-    const entriesFriday = [];
-    
-    for (let ind in simResultDetailed) {
-        let row = simResultDetailed[ind];
-        if (row.day == "Monday") {
-            entriesMonday.push(row.attendence);
-        }
-        if (row.day == "Tuesday") {
-            entriesTuesday.push(row.attendence);
-        }
-        if (row.day == "Wednesday") {
-            entriesWednesday.push(row.attendence);
-        }
-        if (row.day == "Thursday") {
-            entriesThursday.push(row.attendence);
-        }
-        if (row.day == "Friday") {
-            entriesFriday.push(row.attendence);
-        }
-    }
+    //const entriesMonday = [];
+    //const entriesTuesday = [];
+    //const entriesWednesday = [];
+    //const entriesThursday = [];
+    //const entriesFriday = [];
 
     //calculate the medium, standard deviation, percentiles of the *Monday simulations*
     let entriesMondaySort = [];
-    for (let i = 0; i< entriesMonday.length; i++){
-        entriesMondaySort[i] = entriesMonday[i];
+    for (let i = 0; i< simResultDetailed.Monday.length; i++){
+        entriesMondaySort[i] = simResultDetailed.Monday[i];
         entriesMondaySort.sort((a,b) => a-b);
     }
     let statsOutput = getMeanAndStd(entriesMondaySort);
@@ -241,8 +234,8 @@ function runAllSim(){
 
     //calculate the medium, standard deviation, percentiles of the *Tuesday simulations*
     let entriesTuesdaySort = [];
-    for (let i = 0; i< entriesTuesday.length; i++){
-        entriesTuesdaySort[i] = entriesTuesday[i];
+    for (let i = 0; i< simResultDetailed.Tuesday.length; i++){
+        entriesTuesdaySort[i] = simResultDetailed.Tuesday[i];
         entriesTuesdaySort.sort((a,b) => a-b);
     }
     statsOutput = getMeanAndStd(entriesTuesdaySort);
@@ -258,8 +251,8 @@ function runAllSim(){
 
     //calculate the medium, standard deviation, percentiles of the *Wednesday simulations*
     let entriesWednesdaySort = [];
-    for (let i = 0; i< entriesWednesday.length; i++){
-        entriesWednesdaySort[i] = entriesWednesday[i];
+    for (let i = 0; i< simResultDetailed.Wednesday.length; i++){
+        entriesWednesdaySort[i] = simResultDetailed.Wednesday[i];
         entriesWednesdaySort.sort((a,b) => a-b);
     }
     statsOutput = getMeanAndStd(entriesWednesdaySort);
@@ -275,8 +268,8 @@ function runAllSim(){
 
     //calculate the medium, standard deviation, percentiles of the *Thursday simulations*
     let entriesThursdaySort = [];
-    for (let i = 0; i< entriesThursday.length; i++){
-        entriesThursdaySort[i] = entriesThursday[i];
+    for (let i = 0; i< simResultDetailed.Thursday.length; i++){
+        entriesThursdaySort[i] = simResultDetailed.Thursday[i];
         entriesThursdaySort.sort((a,b) => a-b);
     }
     statsOutput = getMeanAndStd(entriesThursdaySort);
@@ -292,8 +285,8 @@ function runAllSim(){
 
     //calculate the medium, standard deviation, percentiles of the *Friday simulations*
     let entriesFridaySort = [];
-    for (let i = 0; i< entriesFriday.length; i++){
-        entriesFridaySort[i] = entriesFriday[i];
+    for (let i = 0; i< simResultDetailed.Friday.length; i++){
+        entriesFridaySort[i] = simResultDetailed.Friday[i];
         entriesFridaySort.sort((a,b) => a-b);
     }
     statsOutput = getMeanAndStd(entriesFridaySort);
@@ -343,7 +336,7 @@ function runAllSim(){
 
     //plot the bar chart of average daily attendence - Monday
     var trace1 = {
-        x: entriesMonday,
+        x: simResultDetailed.Monday,
         type: 'histogram',
         marker: {
             color: "rgba(255, 100, 102, 0.7)", 
@@ -367,7 +360,7 @@ function runAllSim(){
 
     //Tuesday histogram
     var trace2 = {
-        x: entriesTuesday,
+        x: simResultDetailed.Tuesday,
         type: 'histogram',
         marker: {
             color: "rgba(255, 100, 102, 0.7)", 
@@ -385,6 +378,13 @@ function runAllSim(){
       };
     var data2 = [trace2];
     Plotly.newPlot('TueChart', data2,layout2);    
+
+    var layoutall = {
+        grid: {rows: 2, columns: 3, pattern: 'independent'},
+    }
+
+    dataAll = [trace1,trace2];
+    Plotly.newPlot('allChart', dataAll,layoutall);
 
 }
 
