@@ -8,6 +8,11 @@ h3 {
 
 }
 
+h4 { 
+    font-size:1.1rem;
+    font-weight:700;
+}
+
 h6 {
     font-size: 0.9rem;
     color:rgb(50,50,50);
@@ -19,6 +24,10 @@ h6 {
     color: orangered;
 }
 
+.text-explanation{
+    font-size: 0.9rem;
+    color:rgb(100,100,100);
+}
 
 #addOneTeam {
     /*background-color:rgb(240, 240, 232);*/
@@ -90,5 +99,7 @@ select {
   #runSimulation {
     border-width:0px;
     background:linear-gradient(145deg, rgba(243, 138, 19, 0.918), rgba(180, 12, 223, 0.897));
-
+    font-weight:500;
+    font-size:1.2rem;
+    height:50px;
   }

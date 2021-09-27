@@ -1,10 +1,11 @@
 const teamlist=[];
 let weights=[20,20,20,20,20];
 let numSimulation=50;
-let chart;
-let chart2;
+let chartAverageDailyAttendance;
+let chartSummaryDailyAttendance;
 let teamid = 0;
 let simNum = 0;
+let days=["Monday","Tuesday","Wednesday","Thursday","Friday"];
 
 document.querySelector(".addteam").addEventListener("click",createTeam);
 document.getElementById("runSimulation").addEventListener("click",runAllSim);
@@ -17,14 +18,6 @@ Array.prototype.forEach.call(ele_weightSlider, item => item.addEventListener("in
 //create a listener when there is a change in the weights for the five days
 var ele_weightNumber = document.getElementsByClassName("weightNumber");
 Array.prototype.forEach.call(ele_weightNumber, item => item.addEventListener("change",updateWeightsRange));
-
-// delete a team ???
-//var btn_delete = document.getElementsByClassName("delete");
-//for (let i=0; i< btn_delete.length; i++){
-//    console.log("clicked the delete button!");
-    //btn_delete[i].onclick = function(){this.parentNode.remove();}
-//    btn_delete[i].onclick = function(){console.log("clicked the delete button!");}
-//}
 
 
 // click the update button in the settings
@@ -88,7 +81,11 @@ function updateWeightsRange(){
 
 
 //function to add and delete a team under the team info section
-function createTeam(){
+function createTeam(evt){
+    if (document.getElementById('addOneTeam').checkValidity() === false) {
+        return;
+    }
+
     teamid+=1 ; 
     const team={};
     team.teamname = document.getElementById("inputName").value;
@@ -96,7 +93,7 @@ function createTeam(){
     team.numdays = parseInt(document.getElementById("inputNumDays").value);
     team.frequency = document.getElementById("inputFrequency").value;
     team.id = teamid;
-    //event.preventDefault();
+
     teamlist.push(team); //add the team object to the teamlist array
     //set input values to empty
     document.getElementById("inputName").value = "";
@@ -131,9 +128,33 @@ function createTeam(){
             } 
         }
     };
+
+    document.getElementById('addOneTeam').classList.remove("was-validated");
+    evt.preventDefault();
+    evt.stopPropagation();
     console.log("current team list is: ", teamlist);
 
 }
+
+//function to add form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = document.getElementsByClassName('needs-validation');
+      // Loop over them and prevent submission
+      var validation = Array.prototype.filter.call(forms, function(form) {
+        form.addEventListener('submit', function(event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    }, false);
+  })();
+
 
 //master function for running the simulation
 function runAllSim(){
@@ -179,7 +200,6 @@ function runAllSim(){
 
    
     console.log("detailed result is: ", simResultDetailed);
-    //console.log("simulated result object is: " + simResult);
     //call draw the graph function
 
     //plot the bar chart of average daily attendence
@@ -203,18 +223,13 @@ function runAllSim(){
         },
       };
     const ctx = document.getElementById("simChart").getContext('2d');
-    if (chart) {
-        chart.destroy();
+    if (chartAverageDailyAttendance) {
+        chartAverageDailyAttendance.destroy();
     }
-    chart = new Chart(ctx, chartData);
+    chartAverageDailyAttendance = new Chart(ctx, chartData);
 
-    //create an array of simulation entries for each day
-    //const entriesMonday = [];
-    //const entriesTuesday = [];
-    //const entriesWednesday = [];
-    //const entriesThursday = [];
-    //const entriesFriday = [];
 
+    
     //calculate the medium, standard deviation, percentiles of the *Monday simulations*
     let entriesMondaySort = [];
     for (let i = 0; i< simResultDetailed.Monday.length; i++){
@@ -327,10 +342,10 @@ function runAllSim(){
         },
         };
     const ctx2 = document.getElementById("statChart").getContext('2d');
-    if (chart2) {
-        chart2.destroy();
+    if (chartSummaryDailyAttendance) {
+        chartSummaryDailyAttendance.destroy();
     }
-    chart2 = new Chart(ctx2, chartData2);
+    chartSummaryDailyAttendance = new Chart(ctx2, chartData2);
 
 
 
@@ -379,12 +394,12 @@ function runAllSim(){
     var data2 = [trace2];
     Plotly.newPlot('TueChart', data2,layout2);    
 
-    var layoutall = {
-        grid: {rows: 2, columns: 3, pattern: 'independent'},
-    }
+    // var layoutall = {
+    //     grid: {rows: 2, columns: 3, pattern: 'independent'},
+    // }
 
-    dataAll = [trace1,trace2];
-    Plotly.newPlot('allChart', dataAll,layoutall);
+    // dataAll = [trace1,trace2];
+    // Plotly.newPlot('allChart', dataAll,layoutall);
 
 }
 

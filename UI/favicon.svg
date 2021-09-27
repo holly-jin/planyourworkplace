@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.3.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFF1E1;}
+	.st1{fill:#FFD400;}
+	.st2{fill:#FFB242;}
+	.st3{fill:#FF6410;}
+	.st4{fill:#C400C8;}
+	.st5{fill:#FF4289;}
+	.st6{fill:url(#SVGID_1_);}
+	.st7{fill:none;stroke:#32A4FF;stroke-linecap:round;stroke-miterlimit:10;}
+	.st8{fill:none;stroke:#32A4FF;stroke-linecap:round;stroke-miterlimit:10;stroke-dasharray:0.8367,1.7779;}
+	.st9{fill:none;stroke:#32A4FF;stroke-linecap:round;stroke-miterlimit:10;stroke-dasharray:0.8496,1.8054;}
+	.st10{fill:#0C79FF;stroke:#FFFFFF;stroke-width:0.5;stroke-miterlimit:10;}
+	.st11{fill:#0CA6FF;stroke:#FFFFFF;stroke-width:0.5;stroke-miterlimit:10;}
+	.st12{fill:#25B5FF;stroke:#FFFFFF;stroke-width:0.5;stroke-miterlimit:10;}
+	.st13{fill:#60CDFF;stroke:#FFFFFF;stroke-width:0.5;stroke-miterlimit:10;}
+</style>
+<path class="st0" d="M41.41,50H8.59C3.85,50,0,46.15,0,41.41V8.59C0,3.85,3.85,0,8.59,0h32.82C46.15,0,50,3.85,50,8.59v32.82
+	C50,46.15,46.15,50,41.41,50z"/>
+<g>
+	<path class="st1" d="M15.7,15.07H6.49c-0.59,0-1.07,0.48-1.07,1.07v25.78C5.42,42.52,5.9,43,6.49,43h9.21
+		c0.59,0,1.07-0.48,1.07-1.07V16.15C16.78,15.56,16.3,15.07,15.7,15.07z"/>
+</g>
+<g>
+	<path class="st2" d="M30.17,10.85h-9.02c-0.65,0-1.17,0.52-1.17,1.17v29.81c0,0.65,0.52,1.17,1.17,1.17h9.02
+		c0.65,0,1.17-0.52,1.17-1.17V12.02C31.34,11.37,30.81,10.85,30.17,10.85z"/>
+</g>
+<g>
+	<path class="st3" d="M44.33,27.34h-9.5c-0.52,0-0.95,0.42-0.95,0.95v13.77c0,0.52,0.42,0.95,0.95,0.95h9.5
+		c0.52,0,0.95-0.42,0.95-0.95V28.29C45.27,27.77,44.85,27.34,44.33,27.34z"/>
+</g>
+<g>
+	<path class="st4" d="M76.05,25h-4.11C71.42,25,71,25.42,71,25.95v3.11c0,0.52,0.42,0.95,0.95,0.95h4.11c0.52,0,0.95-0.42,0.95-0.95
+		v-3.11C77,25.42,76.58,25,76.05,25z"/>
+</g>
+<g>
+	<path class="st5" d="M68.12,19.78h-4.22c-0.49,0-0.88,0.39-0.88,0.88v8.46c0,0.49,0.39,0.88,0.88,0.88h4.22
+		c0.49,0,0.88-0.39,0.88-0.88v-8.46C69,20.18,68.61,19.78,68.12,19.78z"/>
+</g>
+<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="5" y1="61.5" x2="45" y2="61.5">
+	<stop  offset="0" style="stop-color:#FBB03B"/>
+	<stop  offset="0.468" style="stop-color:#ED1C24"/>
+	<stop  offset="1" style="stop-color:#A12DBA"/>
+</linearGradient>
+<rect x="5" y="60" class="st6" width="40" height="3"/>
+<g>
+	<g>
+		<line class="st7" x1="10.64" y1="14.17" x2="11.02" y2="14.07"/>
+		<line class="st8" x1="12.75" y1="13.64" x2="24.57" y2="10.69"/>
+		<polyline class="st7" points="25.43,10.47 25.82,10.37 26.07,10.68 		"/>
+		<line class="st9" x1="27.2" y1="12.09" x2="38.29" y2="25.87"/>
+		<line class="st7" x1="38.85" y1="26.57" x2="39.1" y2="26.88"/>
+	</g>
+</g>
+<circle class="st10" cx="10.64" cy="14.17" r="2.37"/>
+<circle class="st11" cx="25.82" cy="10.37" r="2.37"/>
+<circle class="st11" cx="39.1" cy="27.29" r="2.37"/>
+<circle class="st12" cx="65.75" cy="19.75" r="1.25"/>
+<circle class="st13" cx="73.75" cy="24.75" r="1.25"/>
+</svg>
