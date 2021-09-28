@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plan Your Workplace</title>
-    <link rel="shortcut icon" type="image/jpg" href="/UI/favicon.svg"/>
+    <link rel="icon" type="image/svg" href="/UI/favicon.svg"/>
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <link href="./stylesheet.css" rel="stylesheet">
@@ -23,9 +23,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
+        <!--
             <li class="nav-item active">
               <a class="nav-link" href="#">Setting <span class="sr-only"></span></a>
             </li>
+        -->
             <li class="nav-item">
               <a class="nav-link" href="#">About</a>
             </li>
@@ -191,15 +193,14 @@
             <!--RIGHT SIDE: results-->
             <div class="col-md-6 pt-5 px-5">
 
-                <canvas id="simChart" width="300" height="200"></canvas>
-                <canvas id="statChart" width="300" height="200"></canvas>
+                <canvas class="my-2" id="simChart" width="300" height="200"></canvas>
+                <canvas class="my-2" id="statChart" width="300" height="200"></canvas>
 
-                <div id="MonChart" width="400" height="200"></div>
-                <div id="TueChart" width="400" height="200"></div>
-                <div id="WedChart" width="400" height="200"></div>
-                <div id="ThuChart" width="400" height="200"></div>
-                <div id="FriChart" width="400" height="200"></div>
-                <div id="allChart" width="400" height="200"></div>
+                <div id="MondayChart" width="400" height="200"></div>
+                <div id="TuesdayChart" width="400" height="200"></div>
+                <div id="WednesdayChart" width="400" height="200"></div>
+                <div id="ThursdayChart" width="400" height="200"></div>
+                <div id="FridayChart" width="400" height="200"></div>
                 <!--
                 <p>
                     Estimated attendence on Monday is <span>xx</span>.<br>

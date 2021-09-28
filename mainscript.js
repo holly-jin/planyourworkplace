@@ -207,7 +207,7 @@ function runAllSim(){
         type: 'bar',
         data: {
             labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-            datasets: [{ label: "Employees in Office",  data: [simResult.Monday, simResult.Tuesday, simResult.Wednesday, simResult.Thursday, simResult.Friday], backgroundColor: "#EDAD40"}]
+            datasets: [{ label: "Average Daily Attendance",  data: [simResult.Monday, simResult.Tuesday, simResult.Wednesday, simResult.Thursday, simResult.Friday], backgroundColor: "#EDAD40"}]
         },
         options: {
           responsive: true,
@@ -244,8 +244,8 @@ function runAllSim(){
     const p75Monday = getPercentile(75, entriesMondaySort);
     const minMonday = entriesMondaySort[0];
     const maxMonday = entriesMondaySort[entriesMondaySort.length - 1];
-    console.log("Monday histogram array SORTED is:", entriesMondaySort);
-    console.log(meanMonday,stdMonday,mediumMonday,minMonday, p25Monday,p75Monday, maxMonday);
+    //console.log("Monday histogram array SORTED is:", entriesMondaySort);
+    //console.log(meanMonday,stdMonday,mediumMonday,minMonday, p25Monday,p75Monday, maxMonday);
 
     //calculate the medium, standard deviation, percentiles of the *Tuesday simulations*
     let entriesTuesdaySort = [];
@@ -261,8 +261,8 @@ function runAllSim(){
     const p75Tuesday = getPercentile(75, entriesTuesdaySort);
     const minTuesday = entriesTuesdaySort[0];
     const maxTuesday = entriesTuesdaySort[entriesTuesdaySort.length - 1];
-    console.log("Tuesday histogram array SORTED is:", entriesTuesdaySort);
-    console.log(meanTuesday,stdTuesday,mediumTuesday,minTuesday, p25Tuesday,p75Tuesday, maxTuesday);
+    //console.log("Tuesday histogram array SORTED is:", entriesTuesdaySort);
+    //console.log(meanTuesday,stdTuesday,mediumTuesday,minTuesday, p25Tuesday,p75Tuesday, maxTuesday);
 
     //calculate the medium, standard deviation, percentiles of the *Wednesday simulations*
     let entriesWednesdaySort = [];
@@ -278,8 +278,8 @@ function runAllSim(){
     const p75Wednesday = getPercentile(75, entriesWednesdaySort);
     const minWednesday = entriesWednesdaySort[0];
     const maxWednesday = entriesWednesdaySort[entriesWednesdaySort.length - 1];
-    console.log("Wednesday histogram array SORTED is:", entriesWednesdaySort);
-    console.log(meanWednesday,stdWednesday,mediumWednesday,minWednesday, p25Wednesday,p75Wednesday, maxWednesday);
+    //console.log("Wednesday histogram array SORTED is:", entriesWednesdaySort);
+    //console.log(meanWednesday,stdWednesday,mediumWednesday,minWednesday, p25Wednesday,p75Wednesday, maxWednesday);
 
     //calculate the medium, standard deviation, percentiles of the *Thursday simulations*
     let entriesThursdaySort = [];
@@ -295,8 +295,8 @@ function runAllSim(){
     const p75Thursday = getPercentile(75, entriesThursdaySort);
     const minThursday = entriesThursdaySort[0];
     const maxThursday = entriesThursdaySort[entriesThursdaySort.length - 1];
-    console.log("Thursday histogram array SORTED is:", entriesThursdaySort);
-    console.log(meanThursday,stdThursday,mediumThursday,minThursday, p25Thursday,p75Thursday, maxThursday);
+    //console.log("Thursday histogram array SORTED is:", entriesThursdaySort);
+    //console.log(meanThursday,stdThursday,mediumThursday,minThursday, p25Thursday,p75Thursday, maxThursday);
 
     //calculate the medium, standard deviation, percentiles of the *Friday simulations*
     let entriesFridaySort = [];
@@ -312,8 +312,8 @@ function runAllSim(){
     const p75Friday = getPercentile(75, entriesFridaySort);
     const minFriday = entriesFridaySort[0];
     const maxFriday = entriesFridaySort[entriesFridaySort.length - 1];
-    console.log("Friday histogram array SORTED is:", entriesFridaySort);
-    console.log(meanFriday,stdFriday,mediumFriday,minFriday, p25Friday,p75Friday, maxFriday);
+    //console.log("Friday histogram array SORTED is:", entriesFridaySort);
+    //console.log(meanFriday,stdFriday,mediumFriday,minFriday, p25Friday,p75Friday, maxFriday);
 
     //plot the bar chart of average daily attendence
     const chartData2 = {
@@ -336,7 +336,7 @@ function runAllSim(){
             },
             title: {
                 display: true,
-                text: 'Estimation of Daily Attendence in the office'
+                text: 'Statistical Summary of Daily Attendance Simulation'
             }
             }
         },
@@ -347,52 +347,10 @@ function runAllSim(){
     }
     chartSummaryDailyAttendance = new Chart(ctx2, chartData2);
 
-
-
-    //plot the bar chart of average daily attendence - Monday
-    var trace1 = {
-        x: simResultDetailed.Monday,
-        type: 'histogram',
-        marker: {
-            color: "rgba(255, 100, 102, 0.7)", 
-             line: {
-              color:  "rgba(255, 100, 102, 1)", 
-              width: 1
-            }
-          },  
-        opacity: 0.5, 
-      };
-      var layout1 = {
-        //bargap: 0.01, 
-        //bargroupgap: 0.2, 
-        //barmode: "overlay", 
-        title: "Simulation Result Histogram - Monday", 
-        xaxis: {title: "Value"}, 
-        yaxis: {title: "Count"}
-      };
-    var data1 = [trace1];
-    Plotly.newPlot('MonChart', data1,layout1);
-
-    //Tuesday histogram
-    var trace2 = {
-        x: simResultDetailed.Tuesday,
-        type: 'histogram',
-        marker: {
-            color: "rgba(255, 100, 102, 0.7)", 
-             line: {
-              color:  "rgba(255, 100, 102, 1)", 
-              width: 1
-            }
-          },  
-        opacity: 0.5, 
-      };
-      var layout2 = {
-        title: "Simulation Result Histogram - Tuesday", 
-        xaxis: {title: "Value"}, 
-        yaxis: {title: "Count"}
-      };
-    var data2 = [trace2];
-    Plotly.newPlot('TueChart', data2,layout2);    
+    //plot the histogram of simulations per day
+    for (let i=0;i<days.length; i++ ) {
+        plotHistogram(days[i],simResultDetailed);
+    }
 
     // var layoutall = {
     //     grid: {rows: 2, columns: 3, pattern: 'independent'},
@@ -401,6 +359,35 @@ function runAllSim(){
     // dataAll = [trace1,trace2];
     // Plotly.newPlot('allChart', dataAll,layoutall);
 
+}
+
+    
+function plotHistogram(day, simResultDetailed) {
+    let trace1 = {
+        x: simResultDetailed[day],
+        type: 'histogram',
+        marker: {
+            color: "rgba(255, 100, 102, 0.7)", 
+            line: {
+              color:  "rgba(255, 100, 102, 1)", 
+              width: 1
+            }
+          },  
+        opacity: 0.5, 
+      };
+    let layout1 = {
+        title: "Simulation Result Histogram - "+day+" Attendance", 
+        font:{
+            family:'Roboto, Arial',
+            size:11
+        },
+        xaxis: {title: "Attendance"}, 
+        yaxis: {title: "Count of Frequency"}
+      };
+
+    let data1 = [trace1];
+    let canvas=day+"Chart";
+    Plotly.newPlot(canvas,data1,layout1,{displaylogo: false, responsive: true});
 }
 
 
@@ -445,7 +432,6 @@ function runOneSim(){
     const oneSimResult = {
         Monday:0, Tuesday:0, Wednesday:0, Thursday:0, Friday:0
     }
-    const conSimResultDetailed = [];
     let resultbyteam = [];
     let daylist = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
