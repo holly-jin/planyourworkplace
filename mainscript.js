@@ -1,152 +1,90 @@
-/*******************************************************
-
-* Copyright (C) 2021 Holly Jin <hj.hongyi@gmail.com>
-
-*
-
-* This file is part of Plan Your Workplace.
-
-*
-
-* Plan Your Workplace can not be copied and/or distributed without the express
-
-* permission of Holly Jin.
-
-*******************************************************/
-
-
-
 const teamlist=[];
 let weights=[20,20,20,20,20];
-let numSimulation=500;
+let numSimulation=50;
 let chartAverageDailyAttendance;
 let chartSummaryDailyAttendance;
 let teamid = 0;
 let simNum = 0;
 let days=["Monday","Tuesday","Wednesday","Thursday","Friday"];
 
-//add listeners
-document.querySelector(".addteam").addEventListener("click",createTeam); //when "save" button is clicked
-document.getElementById("runSimulation").addEventListener("click",runAllSim); // when "run simulation" button is clicked
-//document.getElementById("btn_update").addEventListener("click",updateSettings);
-//document.getElementById("btn_setToDefault").addEventListener("click",defaultSettings);
+document.querySelector(".addteam").addEventListener("click",createTeam);
+document.getElementById("runSimulation").addEventListener("click",runAllSim);
+document.getElementById("btn_update").addEventListener("click",updateSettings);
+document.getElementById("btn_setToDefault").addEventListener("click",defaultSettings);
 
-//create a listener when there is a change in the weights sliders in the overall settings
-//var ele_weightSlider = document.getElementsByClassName("weightSlider");
-//Array.prototype.forEach.call(ele_weightSlider, item => item.addEventListener("input",updateWeightsInput));
-
-//create a listener when there is a change in the weights in the overall settings
-//var ele_weightNumber = document.getElementsByClassName("weightNumber");
-//Array.prototype.forEach.call(ele_weightNumber, item => item.addEventListener("change",updateWeightsRange));
+//create a listener when there is a change in the weights sliders for the five days
+var ele_weightSlider = document.getElementsByClassName("weightSlider");
+Array.prototype.forEach.call(ele_weightSlider, item => item.addEventListener("input",updateWeightsInput));
+//create a listener when there is a change in the weights for the five days
+var ele_weightNumber = document.getElementsByClassName("weightNumber");
+Array.prototype.forEach.call(ele_weightNumber, item => item.addEventListener("change",updateWeightsRange));
 
 //create a listener when there is a change in the weights sliders for the five days IN THE ADD TEAM
 var ele_weightSliderTeam = document.getElementsByClassName("weightSliderTeam");
 Array.prototype.forEach.call(ele_weightSliderTeam, item => item.addEventListener("input",updateWeightsInputTeam));
-
 //create a listener when there is a change in the weights for the five days IN THE ADD TEAM
 var ele_weightNumberTeam = document.getElementsByClassName("weightNumberTeam");
 Array.prototype.forEach.call(ele_weightNumberTeam, item => item.addEventListener("change",updateWeightsRangeTeam));
 
 
-//create a listener to the modal and run the function (this is based on Bootstrap codes)
-var editTeamModal = document.getElementById('addTeamModal');
-editTeamModal.addEventListener('show.bs.modal', function (event) {
-    console.log("this is running");
-    // Button that triggered the modal
-    var button = event.relatedTarget;
-    // Extract info from data-bs-* attributes
-    var teamid = button.getAttribute('data-bs-teamid');
-    // Update the modal's content.
-    if(teamid===null){
-        clearEditForm();
-    } else {
-        // 1. loop through the team list and find the team that has the matching id
-        // 2. populate each input in the modal with the value from the team that we found in step 2    
-        document.getElementById("inputTeamId").value = teamid;
-        const team = getTeamById (teamid);
-        document.getElementById("inputName").value = team.teamname;
-        document.getElementById("inputSize").value = team.teamsize;
-        document.getElementById("inputNumDays").value = team.numdays;
-        document.getElementById("inputFrequency").value = team.frequency;
-        document.getElementById("inputNumDays").value = team.numdays;
-        //add weight preferences
-               
+// click the update button in the settings
+function updateSettings(){
+    const sliders = document.getElementsByClassName("weightSlider");
+    const num = document.getElementById("inputNumSimulation");
+    numSimulation = num.value;
+    console.log(numSimulation);
+    for (let i=0; i<sliders.length; i++){
+        weights[i]= parseInt(sliders[i].value);
     }
-    console.log("teamid",teamid);
-})
-
-//return the team by the team id
-function getTeamById (teamid) {
-    for (let i=0;i<teamlist.length;i++){
-        if (teamlist[i].id == teamid) {
-            return teamlist[i];
-        }
-    } 
-    return null;
+    console.log(weights);
 }
 
-// click the update button in the settings. currently disabled
-// function updateSettings(){
-//     const sliders = document.getElementsByClassName("weightSlider");
-//     const num = document.getElementById("inputNumSimulation");
-//     numSimulation = num.value;
-//     console.log(numSimulation);
-//     for (let i=0; i<sliders.length; i++){
-//         weights[i]= parseInt(sliders[i].value);
-//     }
-//     console.log(weights);
-// }
-
-//update all the settings to default - equal weights and 100 simulation. currently disabled. 
-// function defaultSettings(){
-//     numSimulation = 100;
-//     weights=[20,20,20,20,10];
-//     const sliders = document.getElementsByClassName("weightSlider");
-//     for (let i=0; i<sliders.length; i++){
-//         sliders[i].value = 20;
-//     }
-//     const inputnumbers = document.getElementsByClassName("weightNumber");
-//     for (let i=0; i<inputnumbers.length; i++){
-//         inputnumbers[i].value = 20;
-//     }
-//     document.getElementById("inputNumSimulation").value = 100;
-// }
-
+//update all the settings to default - equal weights and 100 simulation
+function defaultSettings(){
+    numSimulation = 100;
+    weights=[20,20,20,20,10];
+    const sliders = document.getElementsByClassName("weightSlider");
+    for (let i=0; i<sliders.length; i++){
+        sliders[i].value = 20;
+    }
+    const inputnumbers = document.getElementsByClassName("weightNumber");
+    for (let i=0; i<inputnumbers.length; i++){
+        inputnumbers[i].value = 20;
+    }
+    document.getElementById("inputNumSimulation").value = 100;
+}
 
 // currently disabled because the weights have been updated to team-specific
-// function updateWeightsInput(){
-//     const sliders = document.getElementsByClassName("weightSlider");
-//     const inputnumbers = document.getElementsByClassName("weightNumber");
-//     let sumPercentage = 0;
-//     var ele_message = document.getElementById("warning");
-//     //console.log(sliders);
-//     for (let i=0; i<sliders.length; i++){
-//         inputnumbers[i].value = sliders[i].value;
-//         //console.log(typeof sliders[i].value);
-//         sumPercentage+= parseInt(sliders[i].value);
-//         console.log(sumPercentage);
-//     }
-//     if (sumPercentage > 100 || sumPercentage < 100 ) {
-//         ele_message.style.visibility = 'visible';
-//     } 
-//     if (sumPercentage == 100) {
-//         ele_message.style.visibility = 'hidden';
-//     }
-// }
+function updateWeightsInput(){
+    const sliders = document.getElementsByClassName("weightSlider");
+    const inputnumbers = document.getElementsByClassName("weightNumber");
+    let sumPercentage = 0;
+    var ele_message = document.getElementById("warning");
+    //console.log(sliders);
+    for (let i=0; i<sliders.length; i++){
+        inputnumbers[i].value = sliders[i].value;
+        //console.log(typeof sliders[i].value);
+        sumPercentage+= parseInt(sliders[i].value);
+        console.log(sumPercentage);
+    }
+    if (sumPercentage > 100 || sumPercentage < 100 ) {
+        ele_message.style.visibility = 'visible';
+    } 
+    if (sumPercentage == 100) {
+        ele_message.style.visibility = 'hidden';
+    }
+}
 
-// currently disabled because the weights have been updated to team-specific
-//update team information
-// function updateWeightsRange(){
-//     //console.log("input updated");
-//     const sliders = document.getElementsByClassName("weightSlider");
-//     const inputnumbers = document.getElementsByClassName("weightNumber");
-//     for (let i=0; i<inputnumbers.length; i++){
-//         sliders[i].value = inputnumbers[i].value
-//     }
-// }
+function updateWeightsRange(){
+    //console.log("input updated");
+    const sliders = document.getElementsByClassName("weightSlider");
+    const inputnumbers = document.getElementsByClassName("weightNumber");
+    for (let i=0; i<inputnumbers.length; i++){
+        sliders[i].value = inputnumbers[i].value
+    }
+}
 
-
-//update the numbers in input if the sliders are changed when adding/modifying a team
+//update the numbers in input if the sliders are changed
 function updateWeightsInputTeam() {
     const sliders = document.getElementsByClassName("weightSliderTeam");
     const inputnumbers = document.getElementsByClassName("weightNumberTeam");
@@ -167,99 +105,47 @@ function updateWeightsInputTeam() {
     }
 }
 
-//update the numbers in input if the input fields are changed when adding/modifying a team
-function updateWeightsRangeTeam(){
-    const sliders = document.getElementsByClassName("weightSliderTeam");
-    const inputnumbers = document.getElementsByClassName("weightNumberTeam");
-    for (let i=0; i<inputnumbers.length; i++){
-        sliders[i].value = inputnumbers[i].value;
-    }
-}
 
-//clear the input values in the modal form
-function clearEditForm() {
-    document.getElementById("inputName").value = "";
-    document.getElementById("inputSize").value = "";
-    document.getElementById("inputTeamId").value = "";
-}
 
 //function to add and delete a team under the team info section
-//triggers when clicking the "save" button in the modal
 function createTeam(evt){
     if (document.getElementById('addOneTeam').checkValidity() === false) {
         return;
     }
 
-    
-    if (document.getElementById("inputTeamId").value !== "") {
-        console.log("We are about to edit a team");
-        // put editing code here
-        // fetch the team and write in the object values of the team
-        let team = getTeamById (parseInt(document.getElementById("inputTeamId").value));
-        team.teamname = document.getElementById("inputName").value;
-        team.teamsize = parseInt(document.getElementById("inputSize").value);
-        team.numdays = parseInt(document.getElementById("inputNumDays").value);
-        team.frequency = document.getElementById("inputFrequency").value;
-        
-        const sliders = document.getElementsByClassName("weightSliderTeam");
-        for (let i=0; i<sliders.length; i++){
-            team.weights[i] = parseInt(sliders[i].value);
-        }
-
-        let teamDescription=team.teamname + ' has ' + team.teamsize + ' employees. They come into the office '
-        + team.numdays + ' days ' + team.frequency + '.';
-        team.description.textContent = teamDescription;
-        
-        console.log("updated team is: ", team);
-        return;
-    } 
-
-
     teamid+=1 ; 
-    const team={}; //instantiate a team object with the following attributes
+    const team={};
     team.teamname = document.getElementById("inputName").value;
     team.teamsize = parseInt(document.getElementById("inputSize").value);
     team.numdays = parseInt(document.getElementById("inputNumDays").value);
     team.frequency = document.getElementById("inputFrequency").value;
     team.id = teamid;
     team.weights=[];
-    //weights input
+    
     const sliders = document.getElementsByClassName("weightSliderTeam");
     for (let i=0; i<sliders.length; i++){
         team.weights[i] = parseInt(sliders[i].value);
     }
 
     teamlist.push(team); //add the team object to the teamlist array
-    
-    clearEditForm(); //set input values to empty after saving the team info
-
+    //set input values to empty
+    document.getElementById("inputName").value = "";
+    document.getElementById("inputSize").value = "";
 
     //add this team on the page under the team info section
-    let teamDescription=team.teamname + ' has ' + team.teamsize + ' employees. They come into the office '
-        + team.numdays + ' days ' + team.frequency + '.';
+    str=team.teamname + ' has ' + team.teamsize + ' employees. They come into the office '
+     + team.numdays + ' days ' + team.frequency + '.';
     const newele = document.createElement("div");
-    const node = document.createTextNode(teamDescription);
+    const node = document.createTextNode(str);
     newele.appendChild(node);
     newele.classList.add("teamInfo");
-    team.description=node;
     const targetele=document.getElementById("teamInfoSection");
     targetele.appendChild(newele);
-
-    //add the edit button for each new item
-    const edit = document.createElement("button");
-    edit.classList.add("edit");
-    const editIcon = document.createElement("i");
-    editIcon.classList.add("fas", "fa-edit");
-    editIcon.setAttribute("data-bs-toggle","modal");
-    editIcon.setAttribute("data-bs-target","#addTeamModal");
-    editIcon.setAttribute("data-bs-teamid",team.id); //add the team id to the edit icon attribute every time
-    edit.appendChild(editIcon);
-    newele.appendChild(edit);
 
     //add the delete button after each new item
     const del = document.createElement("button");
     del.classList.add("delete");
-    const delIcon = document.createElement("i");
+    const delIcon = document.createElement("i")
     delIcon.classList.add("fas", "fa-trash-alt");
     del.appendChild(delIcon);
     newele.appendChild(del);
@@ -271,21 +157,11 @@ function createTeam(evt){
             if (teamlist[i].id == team.id){
                 teamlist.splice(i,1);
                 console.log("deleted team list is: ", teamlist);
-                if (teamlist.length==0) {
-                    let btn_runsimulation=document.getElementById("runSimulation");
-                    btn_runsimulation.setAttribute("disabled","disabled");
-                }
                 break;
             } 
         }
     };
 
-    if (teamlist.length>0) {
-        let btn_runsimulation=document.getElementById("runSimulation");
-        btn_runsimulation.removeAttribute("disabled");
-    }
-
-    
     document.getElementById('addOneTeam').classList.remove("was-validated");
     evt.preventDefault();
     evt.stopPropagation();
@@ -316,13 +192,6 @@ function createTeam(evt){
 //master function for running the simulation
 function runAllSim(){
 
-    //run the python runsim function
-    //return simresult and simresult detailed, result by team,
-
-
-    //fetch
-    //https://humxojjida.execute-api.us-east-2.amazonaws.com/prd/sim
-
     simNum = 0;
     const simResultDetailed = {
         Monday:[], Tuesday:[], Wednesday:[], Thursday:[], Friday:[]};
@@ -349,6 +218,11 @@ function runAllSim(){
         simResultDetailed.Thursday.push(oneSim.Thursday);
         simResultDetailed.Friday.push(oneSim.Friday);
 
+        //simResultDetailed.Monday.push(oneSim.Monday);
+        //simResultDetailed.Tuesday.push.apply(simResultDetailed.Tuesday,oneSim.Tuesday);
+        //simResultDetailed.Wednesday.push.apply(simResultDetailed.Wednesday,oneSim.Wednesday);
+        //simResultDetailed.Thursday.push.apply(simResultDetailed.Thursday,oneSim.Thursday);
+        //simResultDetailed.Friday.push.apply(simResultDetailed.Friday,oneSim.Friday);
     }
 
     //take the average of the simulation results
@@ -362,29 +236,13 @@ function runAllSim(){
     console.log("detailed result is: ", simResultDetailed);
     //call draw the graph function
 
-    renderResults(simResult,simResultDetailed) //call all the plotting functions
-
-}
-
-
-function renderResults(simResult,simResultDetailed){
-    plotDailySummary(simResultDetailed); //plot the statistical summary line chart of daily attendance 
-    plotBarChart(simResult); //plot the bar charts of daily attendance by department
-    //plot the histogram of simulations per day
-    for (let i=0;i<days.length; i++ ) {
-        plotHistogram(days[i],simResultDetailed);
-    }
-}
-
-
-function plotBarChart(simResult) {
+    //plot the bar chart of average daily attendence
     const chartData = {
         type: 'bar',
         data: {
             labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
             datasets: [{ label: "Average Daily Attendance",  
-                        data: [simResult.Monday, simResult.Tuesday, simResult.Wednesday, simResult.Thursday, simResult.Friday], 
-                        backgroundColor: "#EDAD40"}]
+            data: [simResult.Monday, simResult.Tuesday, simResult.Wednesday, simResult.Thursday, simResult.Friday], backgroundColor: "#EDAD40"}]
         },
         options: {
           responsive: true,
@@ -405,10 +263,8 @@ function plotBarChart(simResult) {
     }
     chartAverageDailyAttendance = new Chart(ctx, chartData);
 
-}
 
-  
-function plotDailySummary(simResultDetailed) {
+    
     //calculate the medium, standard deviation, percentiles of the *Monday simulations*
     let entriesMondaySort = [];
     for (let i = 0; i< simResultDetailed.Monday.length; i++){
@@ -500,11 +356,11 @@ function plotDailySummary(simResultDetailed) {
         data: {
             labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
             datasets: [
-                { label: "Mininum",  data: [minMonday, minTuesday, minWednesday, minThursday, minFriday], backgroundColor: "rgba(255, 159, 64, 0.2)", fill:false,borderWidth:1.25},
-                { label: "25th Percentile",  data: [p25Monday, p25Tuesday, p25Wednesday, p25Thursday, p25Friday], backgroundColor: "rgba(255, 159, 64, 0.2)", borderColor: 'orange', fill: '+1',borderWidth:1.25}, 
-                { label: "Median",  data: [mediumMonday, mediumTuesday, mediumWednesday, mediumThursday, mediumFriday], backgroundColor: "rgba(255, 159, 64, 0.2)", borderColor: '#0ba2e3', fill: "+1",borderWidth:1.5},
-                { label: "75th Percentile",  data: [p75Monday, p75Tuesday, p75Wednesday, p75Thursday, p75Friday], backgroundColor: "rgba(255, 159, 64, 0.2)", borderColor: 'orange', fill: false,borderWidth:1.25},
-                { label: "Maximum",  data: [maxMonday, maxTuesday, maxWednesday, maxThursday, maxFriday], backgroundColor: "rgba(255, 159, 64, 0.2)", fill: false,borderWidth:1.25}
+                { label: "Mininum",  data: [minMonday, minTuesday, minWednesday, minThursday, minFriday], backgroundColor: "#EDAD40", fill:false},
+                { label: "25th Percentile",  data: [p25Monday, p25Tuesday, p25Wednesday, p25Thursday, p25Friday], backgroundColor: "#EDAD40", borderColor: 'orange', fill: false}, //fill: 3
+                { label: "Medium",  data: [mediumMonday, mediumTuesday, mediumWednesday, mediumThursday, mediumFriday], backgroundColor: "#EDAD40", borderColor: '#0ba2e3', fill: false},
+                { label: "75th Percentile",  data: [p75Monday, p75Tuesday, p75Wednesday, p75Thursday, p75Friday], backgroundColor: "#EDAD40", borderColor: 'orange', fill: false},
+                { label: "Maximum",  data: [maxMonday, maxTuesday, maxWednesday, maxThursday, maxFriday], backgroundColor: "#EDAD40", fill: false}
             ]
         },
         options: {
@@ -526,9 +382,19 @@ function plotDailySummary(simResultDetailed) {
     }
     chartSummaryDailyAttendance = new Chart(ctx2, chartData2);
 
-}
-    
+    //plot the histogram of simulations per day
+    for (let i=0;i<days.length; i++ ) {
+        plotHistogram(days[i],simResultDetailed);
+    }
 
+    // var layoutall = {
+    //     grid: {rows: 2, columns: 3, pattern: 'independent'},
+    // }
+
+    // dataAll = [trace1,trace2];
+    // Plotly.newPlot('allChart', dataAll,layoutall);
+
+}
 
     
 function plotHistogram(day, simResultDetailed) {
@@ -552,7 +418,6 @@ function plotHistogram(day, simResultDetailed) {
         },
         xaxis: {title: "Attendance"}, 
         yaxis: {title: "Count of Frequency"},
-        height:300,
         margin: {
             l: 10,
             r: 10,
@@ -564,8 +429,7 @@ function plotHistogram(day, simResultDetailed) {
 
     let data1 = [trace1];
     let canvas=day+"Chart";
-    /*Plotly.newPlot(canvas,data1,layout1,{displaylogo: false, responsive: False});*/
-    Plotly.newPlot(canvas,data1,layout1,{displaylogo: false});
+    Plotly.newPlot(canvas,data1,layout1,{displaylogo: false, responsive: true});
 }
 
 
@@ -609,7 +473,7 @@ function runOneSim(){
     //console.log("runOneSim function is running");
     const oneSimResult = {
         Monday:0, Tuesday:0, Wednesday:0, Thursday:0, Friday:0
-    } //attendance on each day of the whole population per simulation
+    }
     let resultbyteam = [];
     let daylist = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
