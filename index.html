@@ -39,10 +39,10 @@
 
 
     <div class="container-fluid">
-        <div class="row px-3">
+        <div class="row">
 
             <!--LEFT SIDE: intro, input-->
-            <div class="col-md-4 bg-light py-4 px-5">
+            <div class="col-md-6 bg-light py-4 px-5">
                 <!--
                 <p>
                     PLAN YOUR WORKPLACE is a tool designed for managers and companies to 
@@ -91,67 +91,6 @@
 
                         <div class="invalid-feedback">Please select a number of days.</div>
                     </div>
-
-                    <!-- Weight settings for each team -->
-                    <button class="btn mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                        <span style="font-weight:500;text-decoration: underline;">+ Additional Settings</span>
-                    </button>
-                    <div class="collapse" id="collapseExample">
-                        <div class="my-1">
-                            <h4>Chances of Attending on Workdays</h4>
-                            <p class="text-explanation">Adjust weights(%) below to change the odds of attending the workplace on each workday.
-                                The percentage numbers must add up to 100. The default settings assume equal chance  
-                                on each workday(20%). 
-                            </p>
-                            <div class="row">
-                                <label for="weightMondayTeam" class="col-sm-3 col-form-label">Monday</label>
-                                <div class="col-sm-6">
-                                    <input type="range" class="form-range weightSliderTeam" id="weightMondayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
-                                </div>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control weightNumberTeam" id="weightMondayTeam" min="0" max="100" step="1" value="20" placeholder="%">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="weightTuesdayTeam" class="col-sm-3 col-form-label">Tuesday</label>
-                                <div class="col-sm-6">
-                                    <input type="range" class="form-range weightSliderTeam" id="weightTuesdayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
-                                </div>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control weightNumberTeam" id="weightTuesdayTeam" min="0" max="100" step="1" value="20" placeholder="%">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="weightWednesdayTeam" class="col-sm-3 col-form-label">Wednesday</label>
-                                <div class="col-sm-6">
-                                    <input type="range" class="form-range weightSliderTeam" id="weightWednesdayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
-                                </div>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control weightNumberTeam" id="weightWednesdayTeam" min="0" max="100" step="1" value="20" placeholder="%">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="weightThursdayTeam" class="col-sm-3 col-form-label">Thursday</label>
-                                <div class="col-sm-6">
-                                    <input type="range" class="form-range weightSliderTeam" id="weightThursdayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
-                                </div>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control weightNumberTeam" id="weightThursdayTeam" min="0" max="100" step="1" value="20" placeholder="%">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="weightFridayTeam" class="col-sm-3 col-form-label">Friday</label>
-                                <div class="col-sm-6">
-                                    <input type="range" class="form-range weightSliderTeam" id="weightFridayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
-                                </div>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control weightNumberTeam" id="weightFridayTeam" min="0" max="100" step="1" value="20" placeholder="%">
-                                </div>
-                            </div>
-                            <div id="warningTeam">warning message here</div>
-                        </div>
-                    </div>    
-
                     <!-- remember my preference check box
                     <div class="custom-control custom-checkbox mr-sm-2">
                         <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
@@ -252,12 +191,16 @@
             </div>
 
             <!--RIGHT SIDE: results-->
-            <div class="col-md-6 pt-4 px-5">
-                <h3>Simulation Results</h3>
-                <canvas class="my-2" id="simChart" width="300" height="150"></canvas>
-                <canvas class="my-4" id="statChart" width="300" height="200"></canvas>
+            <div class="col-md-6 pt-5 px-5">
 
-                
+                <canvas class="my-2" id="simChart" width="300" height="200"></canvas>
+                <canvas class="my-2" id="statChart" width="300" height="200"></canvas>
+
+                <div id="MondayChart" width="400" height="200"></div>
+                <div id="TuesdayChart" width="400" height="200"></div>
+                <div id="WednesdayChart" width="400" height="200"></div>
+                <div id="ThursdayChart" width="400" height="200"></div>
+                <div id="FridayChart" width="400" height="200"></div>
                 <!--
                 <p>
                     Estimated attendence on Monday is <span>xx</span>.<br>
@@ -277,14 +220,6 @@
                 </p> 
                 -->
             </div>
-            <div class="col-md-2 pt-1 px-1">
-                <div class="chartcanvas" id="MondayChart" width="200" height="50"></div>
-                <div class="chartcanvas" id="TuesdayChart" width="200" height="50"></div>
-                <div class="chartcanvas" id="WednesdayChart" width="200" height="50"></div>
-                <div class="chartcanvas" id="ThursdayChart" width="200" height="50"></div>
-                <div class="chartcanvas" id="FridayChart" width="200" height="50"></div>
-            </div>
-
         </div>
     </div>
 

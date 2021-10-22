@@ -12,19 +12,12 @@ document.getElementById("runSimulation").addEventListener("click",runAllSim);
 document.getElementById("btn_update").addEventListener("click",updateSettings);
 document.getElementById("btn_setToDefault").addEventListener("click",defaultSettings);
 
-//create a listener when there is a change in the weights sliders for the five days
+
 var ele_weightSlider = document.getElementsByClassName("weightSlider");
 Array.prototype.forEach.call(ele_weightSlider, item => item.addEventListener("input",updateWeightsInput));
 //create a listener when there is a change in the weights for the five days
 var ele_weightNumber = document.getElementsByClassName("weightNumber");
 Array.prototype.forEach.call(ele_weightNumber, item => item.addEventListener("change",updateWeightsRange));
-
-//create a listener when there is a change in the weights sliders for the five days IN THE ADD TEAM
-var ele_weightSliderTeam = document.getElementsByClassName("weightSliderTeam");
-Array.prototype.forEach.call(ele_weightSliderTeam, item => item.addEventListener("input",updateWeightsInputTeam));
-//create a listener when there is a change in the weights for the five days IN THE ADD TEAM
-var ele_weightNumberTeam = document.getElementsByClassName("weightNumberTeam");
-Array.prototype.forEach.call(ele_weightNumberTeam, item => item.addEventListener("change",updateWeightsRangeTeam));
 
 
 // click the update button in the settings
@@ -37,6 +30,7 @@ function updateSettings(){
         weights[i]= parseInt(sliders[i].value);
     }
     console.log(weights);
+
 }
 
 //update all the settings to default - equal weights and 100 simulation
@@ -54,8 +48,9 @@ function defaultSettings(){
     document.getElementById("inputNumSimulation").value = 100;
 }
 
-// currently disabled because the weights have been updated to team-specific
+
 function updateWeightsInput(){
+    //console.log("slider updated");
     const sliders = document.getElementsByClassName("weightSlider");
     const inputnumbers = document.getElementsByClassName("weightNumber");
     let sumPercentage = 0;
@@ -84,28 +79,6 @@ function updateWeightsRange(){
     }
 }
 
-//update the numbers in input if the sliders are changed
-function updateWeightsInputTeam() {
-    const sliders = document.getElementsByClassName("weightSliderTeam");
-    const inputnumbers = document.getElementsByClassName("weightNumberTeam");
-    let sumPercentage = 0;
-    let ele_message = document.getElementById("warningTeam");
-
-    for (let i=0; i<sliders.length; i++){
-        inputnumbers[i].value = sliders[i].value;
-        //console.log(typeof sliders[i].value);
-        sumPercentage+= parseInt(sliders[i].value);
-  
-    }
-    if (sumPercentage > 100 || sumPercentage < 100 ) {
-        ele_message.style.visibility = 'visible';
-    } 
-    if (sumPercentage == 100) {
-        ele_message.style.visibility = 'hidden';
-    }
-}
-
-
 
 //function to add and delete a team under the team info section
 function createTeam(evt){
@@ -120,12 +93,6 @@ function createTeam(evt){
     team.numdays = parseInt(document.getElementById("inputNumDays").value);
     team.frequency = document.getElementById("inputFrequency").value;
     team.id = teamid;
-    team.weights=[];
-    
-    const sliders = document.getElementsByClassName("weightSliderTeam");
-    for (let i=0; i<sliders.length; i++){
-        team.weights[i] = parseInt(sliders[i].value);
-    }
 
     teamlist.push(team); //add the team object to the teamlist array
     //set input values to empty
@@ -191,7 +158,6 @@ function createTeam(evt){
 
 //master function for running the simulation
 function runAllSim(){
-
     simNum = 0;
     const simResultDetailed = {
         Monday:[], Tuesday:[], Wednesday:[], Thursday:[], Friday:[]};
@@ -241,8 +207,7 @@ function runAllSim(){
         type: 'bar',
         data: {
             labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-            datasets: [{ label: "Average Daily Attendance",  
-            data: [simResult.Monday, simResult.Tuesday, simResult.Wednesday, simResult.Thursday, simResult.Friday], backgroundColor: "#EDAD40"}]
+            datasets: [{ label: "Average Daily Attendance",  data: [simResult.Monday, simResult.Tuesday, simResult.Wednesday, simResult.Thursday, simResult.Friday], backgroundColor: "#EDAD40"}]
         },
         options: {
           responsive: true,
@@ -414,17 +379,10 @@ function plotHistogram(day, simResultDetailed) {
         title: "Simulation Result Histogram - "+day+" Attendance", 
         font:{
             family:'Roboto, Arial',
-            size:8,
+            size:11
         },
         xaxis: {title: "Attendance"}, 
-        yaxis: {title: "Count of Frequency"},
-        margin: {
-            l: 10,
-            r: 10,
-            b: 50,
-            t: 50,
-            pad: 2,
-          },
+        yaxis: {title: "Count of Frequency"}
       };
 
     let data1 = [trace1];
@@ -470,7 +428,7 @@ function getPercentile(percentile, arr) {
 
 //runs one simluation of the whole population
 function runOneSim(){
-    //console.log("runOneSim function is running");
+   
     const oneSimResult = {
         Monday:0, Tuesday:0, Wednesday:0, Thursday:0, Friday:0
     }
@@ -482,17 +440,23 @@ function runOneSim(){
         eachteam = teamlist[eachteam];
         //console.log(eachteam);
         const numpeople = eachteam.teamsize;
+        const days = eachteam.numdays;
         let daysChosen;
     
         if (eachteam.frequency == "every week"){
             for (let i=0; i<numpeople; i++){
-                daysChosen = runOnePerson_week(eachteam); //array of days chosen by this person
+                daysChosen = runOnePerson_week(days); //array of days chosen by this person
                 //console.log("chosen day for this person is: " + daysChosen);
                 for (day in daysChosen) {
                     oneSimResult[daysChosen[day]]+=1; //result of attendence by day
                 }
             }
         }
+        // if (eachteam.frequency == "every month"){
+        //     for (let i=0; i<numpeople; i++){
+        //         runOnePerson_month(weights);
+        //     }
+        // }
 
         for (let i=0; i<daylist.length; i++){
             let resultEntry = {};
@@ -518,56 +482,40 @@ function runOneSim(){
 }
 
 //runs one simluation of an individual based on the factors: 1.how many days a week 2. weights
-function runOnePerson_week(eachteam){
-    //console.log("runOnePerson_Week function is running");
-    const weights=eachteam.weights.slice().map(x=>x/100);
-    let choicearr=["Monday","Tuesday","Wednesday","Thursday","Friday"];
+function runOnePerson_week(days){
+    const adjustedweights=weights.slice();
+    const workdaylist=["Monday","Tuesday","Wednesday","Thursday","Friday"];
+    let choicearr=[];
     const chosenarr=[];
-    let chosenday;
-    let indChosen;
-    let weightsum;
+    //[10,20,40,20,20] -> [1,2,4,2,2]
+    //['M','T','T','W,'W','W','W','T','T','F','F']
+    //create a list of choices
+    for (let i=0; i< adjustedweights.length; i++){
+        if (adjustedweights[i]>0){
+            choicearr.push.apply(choicearr,new Array(adjustedweights[i]/10).fill(workdaylist[i]));
+        }
+    }
+
+    //console.log("the weighted choice list is:");
+    //console.log(choicearr);
 
     //choose (number of days) times randomly to generate the chosen days for this employee
-    for (let i=0; i<eachteam.numdays ; i++){ 
-        let cumweights=[];  
-        weightsum = weights.reduce((a,b)=>a+b,0); // consider looping
-   
-        
-        //create the accumulated weights array
-        for (let i=0;i<weights.length; i++) {     
-            let arr = weights.slice(0,i+1);
-            let cumsum = arr.reduce((a,b)=>a+b,0); 
-            cumweights[i] = cumsum;
-        }
-        //console.log("UNnormalized accumulated weight list is: ", cumweights);
+    for (let i=0; i<days ; i++){ 
+        const weightsum = adjustedweights.reduce((a,b)=>a+b,0);
+        //console.log("weightsum is:" + weightsum);
+        //console.log("adjusted weights is" + adjustedweights);
 
-        //normalize the weighted choice to the sum of 1
-        cumweights = cumweights.map(x => x / weightsum)
-        //console.log("normalized accumulated weight list is: ", cumweights);
-
-        //generate a random number
-        const rdn = Math.random();
-
-        //return the chosen day from the choicearr list
-        for (let i=0; i<cumweights.length;i++) {
-            if (i==0 && rdn < cumweights[i]){
-                chosenday = choicearr[i];
-                indChosen=i;
-                break;
-            }
-            if (rdn>= cumweights[i-1] && rdn < cumweights[i]){
-                chosenday = choicearr[i];
-                indChosen=i;
-                break;
-            }
-        }
-  
+        const rdn = Math.floor(Math.random()* (weightsum / 10));
+        //console.log("random number is:" + rdn);
+        let chosenday = choicearr[rdn];
+        //simulateDays.chosenday=+1; //add 1 to the day in the simulateddays object
         chosenarr.push(chosenday); //add the chosen day to the chosenarr list
         choicearr = choicearr.filter (a => a!==chosenday); //remove the chosen day options from the arr
-        weights.splice(indChosen,1); //remove the weights of the chosen day from the weights array
-        
         //console.log("update weighted choice list after one choice to :" + choicearr);
-        //console.log("update weighted choice list after one choice to :" + weights);
+        
+        let ind = workdaylist.indexOf(chosenday);
+        adjustedweights[ind] = 0; //set the weight of the day chosen to 0
+    
     }
     //console.log("chosen days for this person", chosenarr);
     return chosenarr //return an array of the days chosen
