@@ -13,9 +13,10 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light p-3">
-        <a class="navbar-brand" href="index.html" style="font-size: 1.3rem; font-weight:400;" >
-            <img src="./UI/icon.svg" alt="" width="60" height="60" class="d-inline-block align-text-middle mx-2">
+    <!-- menu bar -->
+    <nav class="navbar navbar-expand-lg navbar-light p-3 " style="border-bottom:1px solid rgb(212, 212, 212)">
+        <a class="navbar-brand" href="index.html" style="font-size: 1.2rem; font-weight:500; " >
+            <img src="./UI/icon.svg" alt="" width="50" height="50" class="d-inline-block align-text-middle mx-2">
             Plan Your Workplace
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,11 +24,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-        <!--
+
             <li class="nav-item active">
               <a class="nav-link" href="#">Setting <span class="sr-only"></span></a>
             </li>
-        -->
+  
             <li class="nav-item">
               <a class="nav-link" href="#">About</a>
             </li>
@@ -39,131 +40,144 @@
 
 
     <div class="container-fluid">
-        <div class="row px-3">
+        <div class="row">
 
             <!--LEFT SIDE: intro, input-->
-            <div class="col-md-4 bg-light py-4 px-5">
-                <!--
-                <p>
-                    PLAN YOUR WORKPLACE is a tool designed for managers and companies to 
-                    plan the capacity of their workplace in the new ways of working moving 
-                    forward in the post pandenmic world. 
-                </p> -->
-                <p>
-                    PLAN YOUR WORKPLACE helps you plan your workplace capacity by simulating
-                    daily attendence.
-                </p>
-                <h3>
-                    Let's add your team... 
-                </h3> 
+            <div class="col-md-3 left">
 
-
-                <!--add one team-->
-                <form class="p-4 my-3 needs-validation" id="addOneTeam" novalidate onsubmit="javascript:return false;">
-                    <div class="form-group">
-                        <!-- <label for="inputName">Department/Team Name</label> -->
-                        <input type="text" class="form-control" id="inputName" placeholder="Department/Team Name" required>
-                        <div class="valid-feedback"></div>
-                        <div class="invalid-feedback">Please type in the name of your team/department/persona.</div>
+                <!--team info section-->
+                <div class="row my-2" id="teamInfoSection">
+                    <p style="margin-top:2rem; font-size:0.9rem;">YOUR TEAMS</p>
+                    <!-- Button trigger modal "Add Your Team"-->
+                    <div class="addteamcontainer d-grid gap-2 mx-auto">
+                        <button type="button" class="btn" id="btn_AddTeam" data-bs-toggle="modal" data-bs-target="#addTeamModal">
+                            Add a Team
+                        </button>
                     </div>
-                    <div class="form-group my-2">
-                        <!-- <label for="inputSize">Number of employees</label> -->
-                        <input type="number" class="form-control" id="inputSize" placeholder="Number of Employees" required min="1" max="1000000" pattern="[0-9]*">
-                        <div class="invalid-feedback">Please enter a positive number</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <!-- <label class="mr-sm-2" for="inputNumDays">Number of days in office</label> -->
-                        <select class="custom-select mr-sm-2" id="inputNumDays" required>
-                        <option selected value="" disabled>Number of Days</option>
-                        <option value="1">1 day</option>
-                        <option value="2">2 days</option>
-                        <option value="3">3 days</option>
-                        <option value="4">4 days</option>
-                        <option value="5">5 days</option>
-                        </select>
+                </div>
 
-                        <select class="custom-select mr-sm-2" id="inputFrequency" required>
-                        <option selected>every week</option>
-                        <option>every month</option>
-                        <option>quarterly</option>
-                        </select>
-
-                        <div class="invalid-feedback">Please select a number of days.</div>
-                    </div>
-
-                    <!-- Weight settings for each team -->
-                    <button class="btn mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                        <span style="font-weight:500;text-decoration: underline;">+ Additional Settings</span>
-                    </button>
-                    <div class="collapse" id="collapseExample">
-                        <div class="my-1">
-                            <h4>Chances of Attending on Workdays</h4>
-                            <p class="text-explanation">Adjust weights(%) below to change the odds of attending the workplace on each workday.
-                                The percentage numbers must add up to 100. The default settings assume equal chance  
-                                on each workday(20%). 
-                            </p>
-                            <div class="row">
-                                <label for="weightMondayTeam" class="col-sm-3 col-form-label">Monday</label>
-                                <div class="col-sm-6">
-                                    <input type="range" class="form-range weightSliderTeam" id="weightMondayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
-                                </div>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control weightNumberTeam" id="weightMondayTeam" min="0" max="100" step="1" value="20" placeholder="%">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="weightTuesdayTeam" class="col-sm-3 col-form-label">Tuesday</label>
-                                <div class="col-sm-6">
-                                    <input type="range" class="form-range weightSliderTeam" id="weightTuesdayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
-                                </div>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control weightNumberTeam" id="weightTuesdayTeam" min="0" max="100" step="1" value="20" placeholder="%">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="weightWednesdayTeam" class="col-sm-3 col-form-label">Wednesday</label>
-                                <div class="col-sm-6">
-                                    <input type="range" class="form-range weightSliderTeam" id="weightWednesdayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
-                                </div>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control weightNumberTeam" id="weightWednesdayTeam" min="0" max="100" step="1" value="20" placeholder="%">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="weightThursdayTeam" class="col-sm-3 col-form-label">Thursday</label>
-                                <div class="col-sm-6">
-                                    <input type="range" class="form-range weightSliderTeam" id="weightThursdayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
-                                </div>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control weightNumberTeam" id="weightThursdayTeam" min="0" max="100" step="1" value="20" placeholder="%">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="weightFridayTeam" class="col-sm-3 col-form-label">Friday</label>
-                                <div class="col-sm-6">
-                                    <input type="range" class="form-range weightSliderTeam" id="weightFridayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
-                                </div>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control weightNumberTeam" id="weightFridayTeam" min="0" max="100" step="1" value="20" placeholder="%">
-                                </div>
-                            </div>
-                            <div id="warningTeam">warning message here</div>
+                         
+                <!-- Modal -->
+                <div class="modal fade" id="addTeamModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <!--
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                    </div>    
+                         -->
+                        <div class="modal-body">
+                        
+                            <!--add one team-->
+                            <form class="p-4 my-3 needs-validation " id="addOneTeam" novalidate onsubmit="javascript:return false;">
+                                <input type="hidden" id="inputTeamId">
+                                <div class="form-group">
+                                    <!-- <label for="inputName">Department/Team Name</label> -->
+                                    <input type="text" class="form-control" id="inputName" placeholder="Department/Team Name" required>
+                                    <div class="valid-feedback"></div>
+                                    <div class="invalid-feedback">Please type in the name of your team/department/persona.</div>
+                                </div>
+                                <div class="form-group my-2">
+                                    <!-- <label for="inputSize">Number of employees</label> -->
+                                    <input type="number" class="form-control" id="inputSize" placeholder="Number of Employees" required min="1" max="1000000" pattern="[0-9]*">
+                                    <div class="invalid-feedback">Please enter a positive number</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <!-- <label class="mr-sm-2" for="inputNumDays">Number of days in office</label> -->
+                                    <select class="custom-select mr-sm-2" id="inputNumDays" required>
+                                    <option selected value="" disabled>Number of Days</option>
+                                    <option value="1">1 day</option>
+                                    <option value="2">2 days</option>
+                                    <option value="3">3 days</option>
+                                    <option value="4">4 days</option>
+                                    <option value="5">5 days</option>
+                                    </select>
 
-                    <!-- remember my preference check box
-                    <div class="custom-control custom-checkbox mr-sm-2">
-                        <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
-                        <label class="custom-control-label" for="customControlAutosizing">Remember my preference</label>
+                                    <select class="custom-select mr-sm-2" id="inputFrequency" required>
+                                    <option selected>every week</option>
+                                    <option>every month</option>
+                                    <option>quarterly</option>
+                                    </select>
+
+                                    <div class="invalid-feedback">Please select a number of days.</div>
+                                </div>
+
+                                <!-- Weight settings for each team -->
+                                <button class="btn mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                    <span style="font-weight:500;text-decoration: underline;">+ Advanced Settings</span>
+                                </button>
+                                <div class="collapse" id="collapseExample">
+                                    <div class="my-1">
+                                        <h4>Chances of Attending on Workdays</h4>
+                                        <p class="text-explanation">Adjust weights(%) below to change the odds of attending the workplace on each workday.
+                                            The percentage numbers must add up to 100. The default settings assume equal chance  
+                                            on each workday(20%). 
+                                        </p>
+                                        <div class="row">
+                                            <label for="weightMondayTeam" class="col-sm-3 col-form-label">Monday</label>
+                                            <div class="col-sm-6">
+                                                <input type="range" class="form-range weightSliderTeam" id="weightMondayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <input type="number" class="form-control weightNumberTeam" id="weightMondayTeam" min="0" max="100" step="1" value="20" placeholder="%">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <label for="weightTuesdayTeam" class="col-sm-3 col-form-label">Tuesday</label>
+                                            <div class="col-sm-6">
+                                                <input type="range" class="form-range weightSliderTeam" id="weightTuesdayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <input type="number" class="form-control weightNumberTeam" id="weightTuesdayTeam" min="0" max="100" step="1" value="20" placeholder="%">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <label for="weightWednesdayTeam" class="col-sm-3 col-form-label">Wednesday</label>
+                                            <div class="col-sm-6">
+                                                <input type="range" class="form-range weightSliderTeam" id="weightWednesdayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <input type="number" class="form-control weightNumberTeam" id="weightWednesdayTeam" min="0" max="100" step="1" value="20" placeholder="%">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <label for="weightThursdayTeam" class="col-sm-3 col-form-label">Thursday</label>
+                                            <div class="col-sm-6">
+                                                <input type="range" class="form-range weightSliderTeam" id="weightThursdayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <input type="number" class="form-control weightNumberTeam" id="weightThursdayTeam" min="0" max="100" step="1" value="20" placeholder="%">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <label for="weightFridayTeam" class="col-sm-3 col-form-label">Friday</label>
+                                            <div class="col-sm-6">
+                                                <input type="range" class="form-range weightSliderTeam" id="weightFridayTeam" min="0" max="100" step="1" value="20" placeholder="col-form-label">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <input type="number" class="form-control weightNumberTeam" id="weightFridayTeam" min="0" max="100" step="1" value="20" placeholder="%">
+                                            </div>
+                                        </div>
+                                        <div id="warningTeam">warning message here</div>
+                                    </div>
+                                </div>    
+                  
+                            </form>
+
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn addteam ">Save</button>  
+                        </div>
                     </div>
-                    -->
-                    <div>
-                        <button type="submit" class="btn mt-3 addteam">Add</button>      
-                    </div>                
-                </form>
+                    </div>
+                </div>
+
 
                 <!--advanced settings: weight settings-->
+                <!--
                 <button class="btn mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                     <span style="font-weight:500;text-decoration: underline;">+ Advanced Settings</span>
                 </button>
@@ -225,7 +239,7 @@
                     </div>
                     <div class="row">
                         <label class="col-auto" for="inputNumSimulation"><h3>Number of Simulations</h3></label>
-                        <!--need some attention on formatting-->
+                        
                         <input class="col-auto" type="number" class="form-control" id="inputNumSimulation" min="1" max="1000" step="1" value="100">
                         <p class="text-explanation">Adjust the number to change the number of simulations it will run. A higher number of simulations
                             generally yield a more accurate prediction of outcomes. The default number is 100. Caution: A high number may
@@ -239,24 +253,119 @@
                     </div>
                 </div>
 
-                 <!--run simulation button-->
-                 <div class="d-grid gap-2 col-6 mt-4 mx-auto">
-                    <button type="submit" id="runSimulation" class="btn btn-primary">Run Simulation</button>      
-                </div> 
+                -->
 
-                <!--team info section-->
-                <div class="row my-5" id="teamInfoSection">
-                    <h3>Your Teams</h3>
-                </div>
+
+
+
+
+                <!--run simulation button-->
+                <!--<div class="d-grid gap-2 col-6 mt-4 mx-auto">-->
+                <div class="row mt-3">
+                    <button type="submit" id="runSimulation" class="btn btn-primary" disabled>Run Simulation</button>      
+                </div> 
 
             </div>
 
-            <!--RIGHT SIDE: results-->
-            <div class="col-md-6 pt-4 px-5">
-                <h3>Simulation Results</h3>
-                <canvas class="my-2" id="simChart" width="300" height="150"></canvas>
-                <canvas class="my-4" id="statChart" width="300" height="200"></canvas>
 
+            <!--RIGHT SIDE: results-->
+            <div class="col-md-9 pt-4 px-5">
+
+                <!--Landing page section-->
+                <div class="row sectionLanding" style="display:none;">
+                    landing
+                    <div class="col-md-8" style="padding-top:10rem;">
+                        <p style="font-size:0.8rem; margin-bottom:0.2rem;">
+                            PLAN CAPACITY FOR FUTURE WORKPLACE
+                        </p>
+                        <h2>
+                            Simulate daily attendance to predict probable range of attendance.
+                        </h2>
+                    </div>
+
+                    <div class="col-md-4">
+                        image placeholder
+                    </div>
+
+                    <div class="row sectionLanding mt-5" style="font-size:0.9rem">
+                        <div class="col">Monte carlo simulation to model multiple future scenarios</div>
+                        <div class="col">Monte carlo simulation to model multiple future scenarios</div>
+                        <div class="col">Monte carlo simulation to model multiple future scenarios</div>
+                    </div>
+                </div>
+
+                <!--before simulation result preview section-->
+                <div class="row sectionResultPreview" style="display:none;">
+                    preview
+                    Here are estimated attendance based on 5000 simulations.
+                    
+                    <div class="col-md-12 my-3 resultPreviewFrame">
+                        frame 1
+                        <p>How should I intepret this?</p>
+                        <p>Expected attendance on each workday is 800  +/- 25 with 95% confidence. </p>
+                    </div>
+                    <div class="col-md-12 my-3 resultPreviewFrame">
+                        frame 2
+                    </div>
+                    <div class="col-md-12 my-3 resultPreviewFrame">
+                        frame 3
+                    </div>
+                </div>
+                
+                <div class="row sectionResult" >
+                   
+                    <p><br>Simulation Results<p>
+                    <div class="col-md-12 mt-0 mb-3">
+                        <h3 style="border-bottom:1px solid rgb(73, 73, 73)">Summary</h3>
+                        <p class="text-help">How should I intepret this?</p>
+                        <p>Expected attendance on each workday is 800  +/- 25 with 95% confidence. <br>
+                        If you plan for a peak attendance of 800, you will have enough capacity 97.5% of time. <br>
+                        If you plan for a peak attendance of 800, you will have enough capacity 90% of time.
+                        </p>
+                    </div>
+                    <div class="col-md-12 my-3 ">
+                        <div class="row">
+                            <h3>Simulation Overview</h3>
+                            <div class="col-8">
+                                <canvas class="my-4" id="statChart" width="300" height="160"></canvas>
+                            </div>
+                            <div class="col-4">
+                                table
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-12 my-3 ">
+                        <h3>Daily Attendance</h3>
+                        <canvas class="my-2" id="simChart" width="300" height="150"></canvas>
+                    </div>
+                    <div class="col-md-12 my-3 ">
+                        frame 3
+                        <div class="row">
+                            <div class="col">
+                                <div class="chartcanvas" id="MondayChart"  width="100vw" height="200"></div>
+                            </div>
+                            <div class="col">
+                                <div class="chartcanvas" id="TuesdayChart"></div>
+                            </div>
+                            <div class="col">
+                                <div class="chartcanvas" id="WednesdayChart"></div>
+                            </div>
+                            <div class="col">
+                                <div class="chartcanvas" id="ThursdayChart"></div>
+                            </div>
+                            <div class="col">
+                                <div class="chartcanvas" id="FridayChart"></div>
+                            </div>
+
+                        </div>
+                       
+                    </div>
+                
+
+                </div>
+               
+                
                 
                 <!--
                 <p>
@@ -277,24 +386,21 @@
                 </p> 
                 -->
             </div>
-            <div class="col-md-2 pt-1 px-1">
-                <div class="chartcanvas" id="MondayChart" width="200" height="50"></div>
-                <div class="chartcanvas" id="TuesdayChart" width="200" height="50"></div>
-                <div class="chartcanvas" id="WednesdayChart" width="200" height="50"></div>
-                <div class="chartcanvas" id="ThursdayChart" width="200" height="50"></div>
-                <div class="chartcanvas" id="FridayChart" width="200" height="50"></div>
-            </div>
+
+           
 
         </div>
     </div>
 
-    <!-- JavaScript -->
-    <script src="./mainscript.js"></script>
-     <!-- Bootstrap JavaScript Bundle with Popper -->
+    
+    <!-- Bootstrap JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
     <!-- chart.js -->
      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.1/chart.min.js" integrity="sha512-5vwN8yor2fFT9pgPS9p9R7AszYaNn0LkQElTXIsZFCL7ucT8zDCAqlQXDdaqgA1mZP47hdvztBMsIoFxq/FyyQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- plotly.js -->
     <script src="https://cdn.plot.ly/plotly-2.2.0.min.js"></script>
+    <!-- JavaScript -->
+    <script src="./mainscript.js"></script>
+
     </body>
 </html>
