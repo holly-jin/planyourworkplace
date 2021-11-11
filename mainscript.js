@@ -14,7 +14,7 @@
 
 *******************************************************/
 
-
+//remember to change the parseInt to parseFloat for the weights in the currently disabled functions!!!!
 
 const teamlist=[];
 let weights=[20,20,20,20,20];
@@ -39,9 +39,10 @@ document.getElementById("runSimulation").addEventListener("click",runAllSim); //
 //var ele_weightNumber = document.getElementsByClassName("weightNumber");
 //Array.prototype.forEach.call(ele_weightNumber, item => item.addEventListener("change",updateWeightsRange));
 
+//currently disabled because the inputs are removed
 //create a listener when there is a change in the weights sliders for the five days IN THE ADD TEAM
-var ele_weightSliderTeam = document.getElementsByClassName("weightSliderTeam");
-Array.prototype.forEach.call(ele_weightSliderTeam, item => item.addEventListener("input",updateWeightsInputTeam));
+//var ele_weightSliderTeam = document.getElementsByClassName("weightSliderTeam");
+//Array.prototype.forEach.call(ele_weightSliderTeam, item => item.addEventListener("input",updateWeightsInputTeam));
 
 //create a listener when there is a change in the weights for the five days IN THE ADD TEAM
 var ele_weightNumberTeam = document.getElementsByClassName("weightNumberTeam");
@@ -147,34 +148,35 @@ function getTeamById (teamid) {
 
 
 //update the numbers in input if the sliders are changed when adding/modifying a team
-function updateWeightsInputTeam() {
-    const sliders = document.getElementsByClassName("weightSliderTeam");
-    const inputnumbers = document.getElementsByClassName("weightNumberTeam");
-    let sumPercentage = 0;
-    let ele_message = document.getElementById("warningTeam");
+// function updateWeightsInputTeam() {
+//     const sliders = document.getElementsByClassName("weightSliderTeam");
+//     const inputnumbers = document.getElementsByClassName("weightNumberTeam");
+//     let sumPercentage = 0;
+//     let ele_message = document.getElementById("warningTeam");
 
-    for (let i=0; i<sliders.length; i++){
-        inputnumbers[i].value = sliders[i].value;
-        //console.log(typeof sliders[i].value);
-        sumPercentage+= parseInt(sliders[i].value);
+//     for (let i=0; i<sliders.length; i++){
+//         inputnumbers[i].value = sliders[i].value;
+//         //console.log(typeof sliders[i].value);
+//         sumPercentage+= parseInt(sliders[i].value);
   
-    }
-    if (sumPercentage > 100 || sumPercentage < 100 ) {
-        ele_message.style.visibility = 'visible';
-    } 
-    if (sumPercentage == 100) {
-        ele_message.style.visibility = 'hidden';
-    }
-}
+//     }
+//     if (sumPercentage > 100 || sumPercentage < 100 ) {
+//         ele_message.style.visibility = 'visible';
+//     } 
+//     if (sumPercentage == 100) {
+//         ele_message.style.visibility = 'hidden';
+//     }
+// }
 
 //update the numbers in input if the input fields are changed when adding/modifying a team
-function updateWeightsRangeTeam(){
-    const sliders = document.getElementsByClassName("weightSliderTeam");
-    const inputnumbers = document.getElementsByClassName("weightNumberTeam");
-    for (let i=0; i<inputnumbers.length; i++){
-        sliders[i].value = inputnumbers[i].value;
-    }
-}
+//currently disabled because the input fields are removed and only sliders are available
+// function updateWeightsRangeTeam(){
+//     const sliders = document.getElementsByClassName("weightSliderTeam");
+//     const inputnumbers = document.getElementsByClassName("weightNumberTeam");
+//     for (let i=0; i<inputnumbers.length; i++){
+//         sliders[i].value = inputnumbers[i].value;
+//     }
+// }
 
 //clear the input values in the modal form
 function clearEditForm() {
@@ -203,7 +205,7 @@ function createTeam(evt){
         
         const sliders = document.getElementsByClassName("weightSliderTeam");
         for (let i=0; i<sliders.length; i++){
-            team.weights[i] = parseInt(sliders[i].value);
+            team.weights[i] = parseFloat(sliders[i].value);
         }
 
         let teamDescription=team.teamname + ' has ' + team.teamsize + ' employees. They come into the office '
@@ -226,13 +228,14 @@ function createTeam(evt){
     //weights input
     const sliders = document.getElementsByClassName("weightSliderTeam");
     for (let i=0; i<sliders.length; i++){
-        team.weights[i] = parseInt(sliders[i].value);
+        team.weights[i] = parseFloat(sliders[i].value);
     }
 
     teamlist.push(team); //add the team object to the teamlist array
     
     clearEditForm(); //set input values to empty after saving the team info
 
+    
 
     //add this team on the page under the team info section
     let teamDescription=team.teamname + ' has ' + team.teamsize + ' employees. They come into the office '
@@ -274,6 +277,8 @@ function createTeam(evt){
                 if (teamlist.length==0) {
                     let btn_runsimulation=document.getElementById("runSimulation");
                     btn_runsimulation.setAttribute("disabled","disabled");
+                    document.getElementById("sectionResult").style.display="none";
+                    document.getElementById("sectionResultPreview").style.display="flex";
                 }
                 break;
             } 
@@ -283,7 +288,12 @@ function createTeam(evt){
     if (teamlist.length>0) {
         let btn_runsimulation=document.getElementById("runSimulation");
         btn_runsimulation.removeAttribute("disabled");
-    }
+        //change the preview on the right side
+        document.getElementById("sectionResultPreview").style.display="flex";
+        document.getElementById("sectionLanding").style.display="none";
+        document.getElementById("sectionResult").style.display="none";
+    } 
+    
 
     
     document.getElementById('addOneTeam').classList.remove("was-validated");
@@ -361,13 +371,28 @@ function runAllSim(){
    
     console.log("detailed result is: ", simResultDetailed);
     //call draw the graph function
+    
+    document.getElementById("sectionLanding").style.display="none";
+    document.getElementById("sectionResultPreview").style.display="none";
+    document.getElementById("sectionResult").style.display="flex";
 
     renderResults(simResult,simResultDetailed) //call all the plotting functions
 
 }
 
+/*
+function changeVisibility(ele,option) {
+    if (option == "on") {
+        document.getElementById(ele).display="block"
+    }
+    if () {
+        document.getElementById(ele).display="None";
+    }
+}
+*/
 
 function renderResults(simResult,simResultDetailed){
+    renderSummary(simResult); //write in the summary stats in the first result section
     plotDailySummary(simResultDetailed); //plot the statistical summary line chart of daily attendance 
     plotBarChart(simResult); //plot the bar charts of daily attendance by department
     //plot the histogram of simulations per day
@@ -375,6 +400,11 @@ function renderResults(simResult,simResultDetailed){
         plotHistogram(days[i],simResultDetailed);
     }
 }
+
+function renderSummary(simResult) {
+
+}
+
 
 
 function plotBarChart(simResult) {
@@ -545,7 +575,7 @@ function plotHistogram(day, simResultDetailed) {
         opacity: 0.5, 
       };
     let layout1 = {
-        title: "Simulation Result Histogram - "+day+" Attendance", 
+        title: "Simulation Result - "+day, 
         font:{
             family:'Roboto, Arial',
             size:8,
@@ -656,18 +686,18 @@ function runOneSim(){
 //runs one simluation of an individual based on the factors: 1.how many days a week 2. weights
 function runOnePerson_week(eachteam){
     //console.log("runOnePerson_Week function is running");
-    const weights=eachteam.weights.slice().map(x=>x/100);
-    let choicearr=["Monday","Tuesday","Wednesday","Thursday","Friday"];
-    const chosenarr=[];
     let chosenday;
     let indChosen;
     let weightsum;
+    const weights=eachteam.weights.slice();
+    let choicearr=["Monday","Tuesday","Wednesday","Thursday","Friday"];
+    const chosenarr=[];
+    
 
     //choose (number of days) times randomly to generate the chosen days for this employee
-    for (let i=0; i<eachteam.numdays ; i++){ 
-        let cumweights=[];  
+    for (let i=0; i<eachteam.numdays ; i++){   
         weightsum = weights.reduce((a,b)=>a+b,0); // consider looping
-   
+        let cumweights=[];  
         
         //create the accumulated weights array
         for (let i=0;i<weights.length; i++) {     

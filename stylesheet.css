@@ -14,7 +14,7 @@ h2 {
 }
 
 h3 {
-    font-size:1.2rem;
+    font-size:1.1rem;
     font-weight:700;
 
 }
@@ -143,11 +143,35 @@ select {
     border-radius:5px;
     padding-top:0.8rem;
     padding-bottom:0.8rem;
-    border:1px solid rgba(200,200,200,0.8);
+    border:0px solid rgba(200,200,200,0.8);
     height:160px;
+
+    box-shadow: 5px 5px 25px rgba(200,200,200,0.5);
 }
 
+.resultFrame {
+    border:0px solid rgba(200,200,200,0.8);
+    box-shadow: 5px 5px 25px rgba(200,200,200,0.5);
+}
 
+.weightSliderTeam {
+    width:40%;
+    height:0.5rem;
+}
+
+.text-slidersmall {
+    font-size:0.8rem;
+}
+
+.text-resultpreview {
+    font-size:1.2rem;
+    font-weight:700;
+    color:rgba(82, 82, 82, 0.2);
+    width:30%;
+    margin:auto;
+    padding:25px;
+    line-height:1.5rem;
+}
 
 #btn_AddTeam {  
     border-width:0px;
