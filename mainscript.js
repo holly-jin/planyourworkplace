@@ -178,6 +178,10 @@ function getTeamById (teamid) {
 //     }
 // }
 
+
+
+
+
 //clear the input values in the modal form
 function clearEditForm() {
     document.getElementById("inputName").value = "";
@@ -294,8 +298,6 @@ function createTeam(evt){
         document.getElementById("sectionResult").style.display="none";
     } 
     
-
-    
     document.getElementById('addOneTeam').classList.remove("was-validated");
     evt.preventDefault();
     evt.stopPropagation();
@@ -323,50 +325,101 @@ function createTeam(evt){
   })();
 
 
-//master function for running the simulation
+//master function for running the simulation. Called when the "Run simulation" button is clicked.
 function runAllSim(){
-
+    //fetch
     //run the python runsim function
     //return simresult and simresult detailed, result by team,
 
+    //allResults['simResult']=simResult
+    //allResults['simResultByTeam']=simResultByTeam
+    //allResults['simResultTeamAverage']=simResultTeamAverage
+    //allResults['simResultTeamStd']=simResultTeamStd
 
-    //fetch
-    //https://humxojjida.execute-api.us-east-2.amazonaws.com/prd/sim
+    let args = {};
+    args.teamlist = teamlist;
+    args.numofsimulation= numSimulation;
 
-    simNum = 0;
-    const simResultDetailed = {
-        Monday:[], Tuesday:[], Wednesday:[], Thursday:[], Friday:[]};
-    const simResult ={
-        Monday:0, Tuesday:0, Wednesday:0, Thursday:0, Friday:0
+    console.log(args);
+
+    setSimNum(teamlist,numSimulation);
+    // Note from JH
+    // I might make a limit to the number of simulations based on observed time
+    
+    //sending the data to AWS lambda function
+      const request = new Request('https://humxojjida.execute-api.us-east-2.amazonaws.com/prd/sim', {
+        method: 'POST',
+        body: JSON.stringify(args)
+      });
+
+    //transmit 
+      fetch(request)
+        .then(response => { //run if the request is successful
+          if (response.status === 200) {
+            return response.json();
+          } else {
+            throw new Error('Something went wrong on api server!');
+          }
+        })
+        .then(response => {
+            ////////////// run the functions with the output results/////////////////////
+         
+            console.log("the result has been fetched");
+            console.log("THIS IS THE REPONSE:",response);
+            renderResponseResults(response);
+
+        }).catch(error => { //run if there is an error
+          console.error(error);
+        });
+
+
+}
+
+function setSimNum(teamlist,numSimulation) {
+    let total=0;
+    for (team in teamlist) {
+        total+=team.teamsize;
     }
-
-    for (let i=0; i < numSimulation; i++) {
-        simNum+=1;
-        //accumulate the result for SimResult (overall count by day)
-        const output = runOneSim();
-        const oneSim = output.oneSimResult;
-        simResult.Monday+=oneSim.Monday;
-        simResult.Tuesday+=oneSim.Tuesday;
-        simResult.Wednesday+=oneSim.Wednesday;
-        simResult.Thursday+=oneSim.Thursday;
-        simResult.Friday+=oneSim.Friday;
-
-        //accumulate the detailed result entry for SimResultDetailed (detailed count by day)
-        
-        simResultDetailed.Monday.push(oneSim.Monday);
-        simResultDetailed.Tuesday.push(oneSim.Tuesday);
-        simResultDetailed.Wednesday.push(oneSim.Wednesday);
-        simResultDetailed.Thursday.push(oneSim.Thursday);
-        simResultDetailed.Friday.push(oneSim.Friday);
-
+    if (total > 500 && total <= 1000) {
+        numSimulation = 50;
+        console.log("adjusted the simulation number to 100");
     }
+    if (total > 1000) {
+        numSimulation = 5;
+        console.log("adjusted the simulation number to 50");
+    }
+}
 
-    //take the average of the simulation results
-    simResult.Monday=Math.floor(simResult.Monday/numSimulation);
-    simResult.Tuesday=Math.floor(simResult.Tuesday/numSimulation);
-    simResult.Wednesday=Math.floor(simResult.Wednesday/numSimulation);
-    simResult.Thursday=Math.floor(simResult.Thursday/numSimulation);
-    simResult.Friday=Math.floor(simResult.Friday/numSimulation);
+function renderResponseResults(allResults) {
+    
+    //for reference global variable: days=["Monday","Tuesday","Wednesday","Thursday","Friday"]
+    //simResultDetailed
+    const simResultDetailed = {Monday:[], Tuesday:[], Wednesday:[], Thursday:[], Friday:[]};
+    simResultDetailed['Monday'] = allResults['simResult']['Monday'];
+    simResultDetailed['Tuesday'] = allResults['simResult']['Tuesday'];
+    simResultDetailed['Wednesday'] = allResults['simResult']['Wednesday'];
+    simResultDetailed['Thursday'] = allResults['simResult']['Thursday'];
+    simResultDetailed['Friday'] = allResults['simResult']['Friday'];
+
+    //calcuate the mean and std for each day(overall)
+    const simResultStats = {meanDaily:[],stdDaily:[]};
+    let mean,std;
+    for (let i=0; i<days.length; i++) {
+        let day = days[i];
+        let output = getMeanAndStd(simResultDetailed[day]);
+        mean = Math.round(output.mean); //rounding mean and std
+        std = Math.round(output.std); //rounding
+        simResultStats.meanDaily.push(mean);
+        simResultStats.stdDaily.push(std);
+    }
+    //need to test here
+
+     //simNum = 0;
+     //const simResultDetailed = {
+     //    Monday:[], Tuesday:[], Wednesday:[], Thursday:[], Friday:[]};
+     //const simResult ={
+     //    Monday:0, Tuesday:0, Wednesday:0, Thursday:0, Friday:0
+     //}
 
    
     console.log("detailed result is: ", simResultDetailed);
@@ -376,7 +429,7 @@ function runAllSim(){
     document.getElementById("sectionResultPreview").style.display="none";
     document.getElementById("sectionResult").style.display="flex";
 
-    renderResults(simResult,simResultDetailed) //call all the plotting functions
+    renderResults(simResultStats,simResultDetailed) //call all the plotting functions
 
 }
 
@@ -391,29 +444,29 @@ function changeVisibility(ele,option) {
 }
 */
 
-function renderResults(simResult,simResultDetailed){
-    renderSummary(simResult); //write in the summary stats in the first result section
+function renderResults(simResultStats,simResultDetailed){
+    renderSummary(simResultStats); //write in the summary stats in the first result section - average
     plotDailySummary(simResultDetailed); //plot the statistical summary line chart of daily attendance 
-    plotBarChart(simResult); //plot the bar charts of daily attendance by department
+    plotBarChart(simResultStats.meanDaily); //plot the bar charts of daily attendance by department - average
     //plot the histogram of simulations per day
     for (let i=0;i<days.length; i++ ) {
         plotHistogram(days[i],simResultDetailed);
     }
 }
 
-function renderSummary(simResult) {
+function renderSummary(simResultStats) {
 
 }
 
 
 
-function plotBarChart(simResult) {
+function plotBarChart(arr) {
     const chartData = {
         type: 'bar',
         data: {
             labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
             datasets: [{ label: "Average Daily Attendance",  
-                        data: [simResult.Monday, simResult.Tuesday, simResult.Wednesday, simResult.Thursday, simResult.Friday], 
+                        data: arr, //this is the array of data for y values
                         backgroundColor: "#EDAD40"}]
         },
         options: {
@@ -524,7 +577,7 @@ function plotDailySummary(simResultDetailed) {
     //console.log("Friday histogram array SORTED is:", entriesFridaySort);
     //console.log(meanFriday,stdFriday,mediumFriday,minFriday, p25Friday,p75Friday, maxFriday);
 
-    //plot the bar chart of average daily attendence
+    //plot the summary line charts
     const chartData2 = {
         type: 'line',
         data: {
@@ -558,9 +611,7 @@ function plotDailySummary(simResultDetailed) {
 
 }
     
-
-
-    
+   
 function plotHistogram(day, simResultDetailed) {
     let trace1 = {
         x: simResultDetailed[day],
@@ -630,117 +681,6 @@ function getPercentile(percentile, arr) {
         n = Math.round(arr.length * percentile / 100);
         return arr[n-1];
     }
-
-}
-
-
-//runs one simluation of the whole population
-function runOneSim(){
-    //console.log("runOneSim function is running");
-    const oneSimResult = {
-        Monday:0, Tuesday:0, Wednesday:0, Thursday:0, Friday:0
-    } //attendance on each day of the whole population per simulation
-    let resultbyteam = [];
-    let daylist = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
-    for (let eachteam in teamlist) {
-        //console.log("each team is:");
-        eachteam = teamlist[eachteam];
-        //console.log(eachteam);
-        const numpeople = eachteam.teamsize;
-        let daysChosen;
-    
-        if (eachteam.frequency == "every week"){
-            for (let i=0; i<numpeople; i++){
-                daysChosen = runOnePerson_week(eachteam); //array of days chosen by this person
-                //console.log("chosen day for this person is: " + daysChosen);
-                for (day in daysChosen) {
-                    oneSimResult[daysChosen[day]]+=1; //result of attendence by day
-                }
-            }
-        }
-
-        for (let i=0; i<daylist.length; i++){
-            let resultEntry = {};
-            //ResultEntry(teamid, teamname, day, attendence, simnum)
-            resultEntry.teamid = eachteam.id;
-            resultEntry.teamname = eachteam.teamname;
-            resultEntry.simnum = simNum;
-            resultEntry.day = daylist[i];
-            resultEntry.attendence = oneSimResult[daylist[i]];
-
-            resultbyteam.push(resultEntry);
-        }
-
-    }
-    //console.log("result from one simultion" + oneSimResult);
-   
-    let output = {};
-    output.oneSimResult = oneSimResult;
-    output.resultbyteam = resultbyteam;
-
-    return output;
-    
-}
-
-//runs one simluation of an individual based on the factors: 1.how many days a week 2. weights
-function runOnePerson_week(eachteam){
-    //console.log("runOnePerson_Week function is running");
-    let chosenday;
-    let indChosen;
-    let weightsum;
-    const weights=eachteam.weights.slice();
-    let choicearr=["Monday","Tuesday","Wednesday","Thursday","Friday"];
-    const chosenarr=[];
-    
-
-    //choose (number of days) times randomly to generate the chosen days for this employee
-    for (let i=0; i<eachteam.numdays ; i++){   
-        weightsum = weights.reduce((a,b)=>a+b,0); // consider looping
-        let cumweights=[];  
-        
-        //create the accumulated weights array
-        for (let i=0;i<weights.length; i++) {     
-            let arr = weights.slice(0,i+1);
-            let cumsum = arr.reduce((a,b)=>a+b,0); 
-            cumweights[i] = cumsum;
-        }
-        //console.log("UNnormalized accumulated weight list is: ", cumweights);
-
-        //normalize the weighted choice to the sum of 1
-        cumweights = cumweights.map(x => x / weightsum)
-        //console.log("normalized accumulated weight list is: ", cumweights);
-
-        //generate a random number
-        const rdn = Math.random();
-
-        //return the chosen day from the choicearr list
-        for (let i=0; i<cumweights.length;i++) {
-            if (i==0 && rdn < cumweights[i]){
-                chosenday = choicearr[i];
-                indChosen=i;
-                break;
-            }
-            if (rdn>= cumweights[i-1] && rdn < cumweights[i]){
-                chosenday = choicearr[i];
-                indChosen=i;
-                break;
-            }
-        }
-  
-        chosenarr.push(chosenday); //add the chosen day to the chosenarr list
-        choicearr = choicearr.filter (a => a!==chosenday); //remove the chosen day options from the arr
-        weights.splice(indChosen,1); //remove the weights of the chosen day from the weights array
-        
-        //console.log("update weighted choice list after one choice to :" + choicearr);
-        //console.log("update weighted choice list after one choice to :" + weights);
-    }
-    //console.log("chosen days for this person", chosenarr);
-    return chosenarr //return an array of the days chosen
-}
-
-
-function createWeightedChoices(weights){
 
 }
 
