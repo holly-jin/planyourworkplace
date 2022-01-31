@@ -275,22 +275,74 @@
                         <h2>
                             Simulate daily attendance to predict capacity needs.
                         </h2>
-                        <p style="font-size:1rem; line-height:1.3rem; margin-top:3rem;">
-                            Welcome! This is a demo of the simulator tool that's currently
-                            under development. Please use this for test or demostration purposes only.
+                        <p class="mt-5">
+                            <span style="font-size:1.4rem;">Welcome! </span>
+
+                            Plan Your Workplace aims to simulate daily workplace attendance to help us forecast attendance at the workplace.
+                            You will be able to: </p>
+                            <ul>
+                                <li>Leverage employee survey data, policy, and leadership input to model the mix of 
+                                    hybrid attendance categories</li>
+                                <li>Construct scenarios to predict future attendance patterns based on various 
+                                    assumptions and build confidence in our strategies</li>
+                            </ul>
+                            <p>
+                            *This is a demo of the attendance simulator tool currently
+                            under development. 
+                            
+                            Please use this for test or demostration purposes only.
+                            <!--
                             If you have any questions or wish to use this 
                             tool for projects, please contact Holly Jin.
-                            <br>
-                            <br>
-                            *Please note that due to the current Cloud platform limit, the total population size 
-                            is limited to 800 people. It will take a few seconds to show the results after 
-                            clicking the Run Simulation botton.
-                            
+                            -->
                         </p>
                     </div>
 
                     <div class="col-md-4">
-                        [image]
+                        
+                        <img src="demo_graph.png" alt="demo graph" style="width:100%" class="mt-5">
+                    </div>
+
+                    <div class="col-md-8">
+                        <h2 class="mt-5">FAQs</h2>
+                        <br>
+                        <h3>+ Why Simulation?</h3>
+                        <p>
+                            Companies are moving away from the full-time in-office model and adopting various degree of hybrid work.
+                            The workplace must evolve to meet the dynamic needs of how we work in the future.
+                            <br>The first step in planning the future workplace is to understand the capacity demand.
+                            Unfortunately, historical knowledge is no longer the best indicator of how frequently employees will attend the workplace.
+                            Building probabilistic models to simulate workplace attendance allows us to forecast the future attendance.
+                        </p>
+
+                        <h3>+ How does it work?</h3>
+                        <p>
+                            <ol>
+                                <li>
+                                    Model individual's attendance behaviors based on input (i.e. days/week in the office, 
+                                    likelihood on attending on each day, etc.) to model “real world” behavior.
+                                </li>
+                                <li>
+                                    Simulate attendance behaviors based on individuals' choices and 
+                                    record daily attendance result in each iteration.
+                                </li>
+                                <li>
+                                    Run thousands of independent simulation to predict attendance patterns using 
+                                    Monte Carlo methodology
+                                </li>
+                                <li>
+                                    Draw statistical summary (i.e. mean, standard deviation, etc.) of all simulation 
+                                    to predict the probabilities of future attendance patterns based on different 
+                                    confidence intervals
+                                </li>
+                            </ol>
+                            
+                        </p>
+
+                        <h3>+ How can I use the results?</h3>
+                        <p>
+                            How the results can be used will vary case by case.
+                        </p>
                     </div>
 
                     <div class="col-md-12" style="font-size:0.9rem">
@@ -328,9 +380,13 @@
                     <div class="col-md-12 mt-0 mb-3 p-4 resultFrame">
                         <h3 style="border-bottom:1px solid rgb(73, 73, 73)">Summary</h3>
                         <p class="text-help">How should I intepret this?</p>
-                        <p>Expected attendance on each workday is [result]  +/- [result] with 95% confidence based on [result] simulations. <br>
-                        If you plan for a peak attendance of [result], you will have enough capacity 97.5% of time. <br>
-                        If you plan for a peak attendance of [result], you will have enough capacity 90% of time.
+                        <div id="box1Summary">
+
+                        </div>
+                        <p>
+                            [ ] and [ ] will likely see the highest attendance. <br>
+                            Expected attendance on the busiest day is [result]  +/- [result] with 95% confidence based on [result] simulations. <br>
+                            If you plan for a peak attendance of [result], you will have enough capacity 97.5% of time. <br>
                         </p>
                     </div>
 
@@ -340,12 +396,13 @@
                             <div class="col-8">
                                 <canvas class="my-4" id="statChart" width="300" height="160"></canvas>
                             </div>
-                            <div class="col-4">
+                            <div class="col-4" id="tableConfidenceLevel">
                                 table
                             </div>
                         </div>             
                     </div>
 
+                    <!-- plot the bar chart section
                     <div class="col-md-12 my-3 p-4 resultFrame">
                         <div class="row">
                             <h3>Daily Attendance</h3>
@@ -358,6 +415,7 @@
                             </div>
                         </div>
                     </div>
+                    -->
 
                     <div class="col-md-12 my-3 p-4 resultFrame">
                         <h3>Daily Simulation Details</h3>
@@ -379,10 +437,17 @@
                             </div>
 
                         </div>
-                       
+                    </div>
+
+                    <div class="col-md-12 my-3 p-4 resultFrame">
+                        <h3>Overall Simulation Details</h3>
+                        <div class="row">
+                            <div class="col">
+                                <div class="chartcanvas" id="allDayChart"  width="100vw" height="200"></div>
+                            </div>
+                        </div>
                     </div>
                 
-
                 </div>
                
                 

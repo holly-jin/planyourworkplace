@@ -18,7 +18,7 @@
 
 const teamlist=[];
 let weights=[20,20,20,20,20];
-let numSimulation=500;
+let numSimulation=2000;
 let chartAverageDailyAttendance;
 let chartSummaryDailyAttendance;
 let teamid = 0;
@@ -324,82 +324,334 @@ function createTeam(evt){
     }, false);
   })();
 
-
-//master function for running the simulation. Called when the "Run simulation" button is clicked.
-function runAllSim(){
-    //fetch
-    //run the python runsim function
-    //return simresult and simresult detailed, result by team,
-
-    //allResults['simResult']=simResult
-    //allResults['simResultByTeam']=simResultByTeam
-    //allResults['simResultTeamAverage']=simResultTeamAverage
-    //allResults['simResultTeamStd']=simResultTeamStd
-
-    let args = {};
-    args.teamlist = teamlist;
-    args.numofsimulation= numSimulation;
-
-    console.log(args);
-
-    setSimNum(teamlist,numSimulation);
-    // Note from JH
-    // I might make a limit to the number of simulations based on observed time
-    
-    //sending the data to AWS lambda function
-      const request = new Request('https://humxojjida.execute-api.us-east-2.amazonaws.com/prd/sim', {
-        method: 'POST',
-        body: JSON.stringify(args)
-      });
-
-    //transmit 
-      fetch(request)
-        .then(response => { //run if the request is successful
-          if (response.status === 200) {
-            return response.json();
-          } else {
-            throw new Error('Something went wrong on api server!');
-          }
-        })
-        .then(response => {
-            ////////////// run the functions with the output results/////////////////////
-         
-            console.log("the result has been fetched");
-            console.log("THIS IS THE REPONSE:",response);
-            renderResponseResults(response);
-
-        }).catch(error => { //run if there is an error
-          console.error(error);
-        });
-
-
-}
-
+//set number of simulation based on the population size (to limit the run time)
 function setSimNum(teamlist,numSimulation) {
     let total=0;
-    for (team in teamlist) {
+    for (let i in teamlist) {
+        let team = teamlist[i];
         total+=team.teamsize;
+        
     }
+    console.log("running setSimNum function, total HC is", total);
     if (total > 500 && total <= 1000) {
-        numSimulation = 50;
+        numSimulation = 2000;
         console.log("adjusted the simulation number to 100");
     }
     if (total > 1000) {
-        numSimulation = 5;
+        numSimulation = 500;
         console.log("adjusted the simulation number to 50");
     }
 }
 
-function renderResponseResults(allResults) {
+//calculate the population stats including total HC, people in each hybrid category
+function calHeadcount(){
+    //calculat the total HC
+    let totalHC=0; 
+    //calculate HC in each hybrid category (1day/week,2days/week)
+    const hcPerCategory = {
+        $1DayPerWeek:0,
+        $2DayPerWeek:0,
+        $3DayPerWeek:0,
+        $4DayPerWeek:0,
+        $5DayPerWeek:0
+    }; 
+    console.log("begin to run the calHeadcount function");
     
+    for (let i in teamlist) {
+        let team = teamlist[i];
+        let size = team.teamsize;
+        totalHC+=size;
+
+        if (team.numdays == 1 && team.frequency == "every week") { hcPerCategory.$1DayPerWeek+=size }
+        if (team.numdays == 2 && team.frequency == "every week") { hcPerCategory.$2DayPerWeek+=size }
+        if (team.numdays == 3 && team.frequency == "every week") { hcPerCategory.$3DayPerWeek+=size }
+        if (team.numdays == 4 && team.frequency == "every week") { hcPerCategory.$4DayPerWeek+=size }
+        if (team.numdays == 5 && team.frequency == "every week") { hcPerCategory.$5DayPerWeek+=size }
+    }
+
+    console.log("running the calHeadcount function, total HC is",totalHC);
+    let output = {};
+    output.totalHC = totalHC;
+    output.hcPerCategory = hcPerCategory;
+
+    return output;
+}
+
+async function getSimResultsFromServer(teamlist, numofsimulation) {
+    // const url = 'http://127.0.0.1:3000/';
+    const url = 'https://j4.is/njs/';
+    const response = await fetch(url, {
+	method: 'POST',
+	mode: 'cors', // no-cors, *cors, same-origin
+	body: JSON.stringify({teamlist, numofsimulation})
+    });
+    return response.json();
+}
+
+//old code before migrating to server
+//master function for running the simulation. Called when the "Run simulation" button is clicked.
+//function runAllSim(){
+    //adjust the number of simulation based on observed run time
+//    setSimNum(teamlist,numSimulation);
+//
+//   let args = {};
+//    args.teamlist = teamlist;
+//    args.numofsimulation= numSimulation;
+    //console.log(args);   
+//    let results = runSimAlgorithm(args);
+//    calResponseResults(results);
+//}
+
+//master function for running the simulation. Called when the "Run simulation" button is clicked.
+async function runAllSim(){
+
+    //adjust the number of simulation based on observed run time
+    setSimNum(teamlist,numSimulation);
+
+    try {
+	const simResults = await getSimResultsFromServer(teamlist, numSimulation);
+	calResponseResults(simResults);
+    } catch (e) {
+	console.warn(e);
+    }
+    // return after getting server response
+    return;
+
+    let args = {};
+    args.teamlist = teamlist;
+    args.numofsimulation= numSimulation;
+   
+    let results = runSimAlgorithm(args);
+    calResponseResults(results);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////
+//run the simulation algorithm and return the results "response"
+function runSimAlgorithm(args) {
+    let teamlist = args.teamlist;
+    let numSimulation = args.numofsimulation;
+
+    simNum = 0;
+    const simResult = {Monday:[], Tuesday:[], Wednesday:[], Thursday:[], Friday:[]};
+    //each day contains the list of results from all simulation
+
+    for (let i=0; i < numSimulation; i++) {
+        simNum+=1;
+        //accumulate the result for SimResult (overall count by day)
+        const output = runOneSim();
+        const oneSim = output.oneSimResult;
+        //accumulate the detailed result entry for SimResult (detailed count by day)     
+        simResult.Monday.push(oneSim.Monday);
+        simResult.Tuesday.push(oneSim.Tuesday);
+        simResult.Wednesday.push(oneSim.Wednesday);
+        simResult.Thursday.push(oneSim.Thursday);
+        simResult.Friday.push(oneSim.Friday);
+    }
+
+    let results = {};
+    results.simResult = simResult;
+    //results.simResultByTeam = [];
+
+    return results;
+}
+
+//runs one simluation of the whole population
+function runOneSim(){
+    const oneSimResult = {
+        Monday:0, Tuesday:0, Wednesday:0, Thursday:0, Friday:0
+    } //attendance on each day of the whole population per simulation
+    
+    let resultbyteam = [];
+    
+    let daylist = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+    for (let eachteam in teamlist) {
+
+        eachteam = teamlist[eachteam];
+       
+        const numpeople = eachteam.teamsize;
+        let daysChosen;
+    
+        for (let i=0; i<numpeople; i++){
+            daysChosen = runOnePerson(eachteam); //array of days chosen by this person
+            //console.log("chosen day for this person is: " + daysChosen);
+            for (day in daysChosen) {
+                oneSimResult[daysChosen[day]]+=1; //result of attendence by day
+            }
+        }
+
+        /* original codes when the option only has "every week"
+        if (eachteam.frequency == "every week"){
+            for (let i=0; i<numpeople; i++){
+                daysChosen = runOnePerson_week(eachteam); //array of days chosen by this person
+                //console.log("chosen day for this person is: " + daysChosen);
+                for (day in daysChosen) {
+                    oneSimResult[daysChosen[day]]+=1; //result of attendence by day
+                }
+            }
+        }
+        */
+
+        //???
+        for (let i=0; i<daylist.length; i++){
+            let resultEntry = {};
+            //ResultEntry(teamid, teamname, day, attendence, simnum)
+            resultEntry.teamid = eachteam.id;
+            resultEntry.teamname = eachteam.teamname;
+            resultEntry.day = daylist[i];
+            resultEntry.attendence = oneSimResult[daylist[i]];
+            resultbyteam.push(resultEntry);
+        }
+    }
+    //console.log("result from one simultion" + oneSimResult);
+   
+    let output = {};
+    output.oneSimResult = oneSimResult;
+    output.resultbyteam = resultbyteam;
+    return output;
+}
+
+//original function -> only deals with weekly base
+//runs one simluation of an individual based on the factors: 1.how many days a week 2. weights
+function runOnePerson_week(eachteam){
+    //console.log("runOnePerson_Week function is running");
+
+    let chosenday;
+    let indChosen;
+    let weightsum;
+    const weights=eachteam.weights.slice();
+    let choicearr=["Monday","Tuesday","Wednesday","Thursday","Friday"];
+    const chosenarr=[];
+
+
+    //choose (number of days) times randomly to generate the chosen days for this employee
+    for (let i=0; i<eachteam.numdays ; i++){   
+        let cumweights=[];  
+
+        weightsum = weights.reduce((a,b)=>a+b,0); // consider looping
+
+        //create the accumulated weights array
+        for (let i=0;i<weights.length; i++) {     
+            let arr = weights.slice(0,i+1);
+            let cumsum = arr.reduce((a,b)=>a+b,0); 
+            cumweights[i] = cumsum;
+        }
+        //console.log("UNnormalized accumulated weight list is: ", cumweights);
+        
+        cumweights = cumweights.map(x => x / weightsum) //normalize the weighted choice to the sum of 1
+        //console.log("normalized accumulated weight list is: ", cumweights);
+
+        //generate a random number
+        const rdn = Math.random();
+
+        //choose the day to come in
+        //return the chosen day from the choicearr list
+        for (let i=0; i<cumweights.length;i++) {
+            if (i==0 && rdn < cumweights[i]){
+                chosenday = choicearr[i];
+                indChosen=i;
+                break;
+            }
+            if (rdn>= cumweights[i-1] && rdn < cumweights[i]){
+                chosenday = choicearr[i];
+                indChosen=i;
+                break;
+            }
+        }
+  
+        chosenarr.push(chosenday); //add the chosen day to the chosenarr list
+        choicearr = choicearr.filter (a => a!==chosenday); //remove the chosen day options from the arr
+        weights.splice(indChosen,1); //remove the weights of the chosen day from the weights array
+        
+        //console.log("update weighted choice list after one choice to :" + choicearr);
+        //console.log("update weighted choice list after one choice to :" + weights);
+    }
+    //console.log("chosen days for this person", chosenarr);
+    return chosenarr //return an array of the days chosen
+}
+
+//runs one simluation of an individual based on the factors: 1.how many days a week 2. weights
+function runOnePerson(eachteam){
+    //console.log("runOnePerson_Week function is running");
+
+    let chosenday;
+    let indChosen;
+    let weightsum;
+    const weights=eachteam.weights.slice();
+    let choicearr=["Monday","Tuesday","Wednesday","Thursday","Friday"];
+    const chosenarr=[];
+
+
+    //choose (number of days) times randomly to generate the chosen days for this employee
+    if (eachteam.frequency == "every week") {
+
+        for (let i=0; i<eachteam.numdays ; i++){   
+            let cumweights=[];    
+            weightsum = weights.reduce((a,b)=>a+b,0); // consider looping
+    
+            //create the accumulated weights array
+            for (let i=0;i<weights.length; i++) {     
+                let arr = weights.slice(0,i+1);
+                let cumsum = arr.reduce((a,b)=>a+b,0); 
+                cumweights[i] = cumsum;
+            }
+            //console.log("UNnormalized accumulated weight list is: ", cumweights);
+            
+            cumweights = cumweights.map(x => x / weightsum) //normalize the weighted choice to the sum of 1
+            //console.log("normalized accumulated weight list is: ", cumweights);
+    
+            //generate a random number
+            const rdn = Math.random();
+    
+            //choose the day to come in
+            //return the chosen day from the choicearr list
+            for (let i=0; i<cumweights.length;i++) {
+                if (i==0 && rdn < cumweights[i]){
+                    chosenday = choicearr[i];
+                    indChosen=i;
+                    break;
+                }
+                if (rdn>= cumweights[i-1] && rdn < cumweights[i]){
+                    chosenday = choicearr[i];
+                    indChosen=i;
+                    break;
+                }
+            }
+      
+            chosenarr.push(chosenday); //add the chosen day to the chosenarr list
+            choicearr = choicearr.filter (a => a!==chosenday); //remove the chosen day options from the arr
+            weights.splice(indChosen,1); //remove the weights of the chosen day from the weights array
+            
+            //console.log("update weighted choice list after one choice to :" + choicearr);
+            //console.log("update weighted choice list after one choice to :" + weights);
+        }
+
+    }
+    
+    //console.log("chosen days for this person", chosenarr);
+    return chosenarr //return an array of the days chosen
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+
+function calResponseResults(allResults) {
+
     //for reference global variable: days=["Monday","Tuesday","Wednesday","Thursday","Friday"]
     //simResultDetailed
+
     const simResultDetailed = {Monday:[], Tuesday:[], Wednesday:[], Thursday:[], Friday:[]};
     simResultDetailed['Monday'] = allResults['simResult']['Monday'];
     simResultDetailed['Tuesday'] = allResults['simResult']['Tuesday'];
     simResultDetailed['Wednesday'] = allResults['simResult']['Wednesday'];
     simResultDetailed['Thursday'] = allResults['simResult']['Thursday'];
     simResultDetailed['Friday'] = allResults['simResult']['Friday'];
+
+    //array of all simulations regardless of days
+    const simResultAllDays = simResultDetailed['Monday'].concat(simResultDetailed['Tuesday'],simResultDetailed['Wednesday'],simResultDetailed['Thursday'],simResultDetailed['Friday']);  
+    console.log("All simulation results of all days are:",simResultAllDays);
 
     //calcuate the mean and std for each day(overall)
     const simResultStats = {meanDaily:[],stdDaily:[]};
@@ -408,7 +660,7 @@ function renderResponseResults(allResults) {
         let day = days[i];
         let output = getMeanAndStd(simResultDetailed[day]);
         mean = Math.round(output.mean); //rounding mean and std
-        std = Math.round(output.std); //rounding
+        std = output.std; //not rounding
         simResultStats.meanDaily.push(mean);
         simResultStats.stdDaily.push(std);
     }
@@ -423,13 +675,14 @@ function renderResponseResults(allResults) {
 
    
     console.log("detailed result is: ", simResultDetailed);
-    //call draw the graph function
     
+    
+
     document.getElementById("sectionLanding").style.display="none";
     document.getElementById("sectionResultPreview").style.display="none";
     document.getElementById("sectionResult").style.display="flex";
 
-    renderResults(simResultStats,simResultDetailed) //call all the plotting functions
+    renderResults(simResultStats,simResultDetailed,simResultAllDays) //call all the plotting functions
 
 }
 
@@ -444,22 +697,57 @@ function changeVisibility(ele,option) {
 }
 */
 
-function renderResults(simResultStats,simResultDetailed){
+function renderResults(simResultStats,simResultDetailed,simResultAllDays){
     renderSummary(simResultStats); //write in the summary stats in the first result section - average
-    plotDailySummary(simResultDetailed); //plot the statistical summary line chart of daily attendance 
-    plotBarChart(simResultStats.meanDaily); //plot the bar charts of daily attendance by department - average
+    plotDailySummary(simResultDetailed,simResultStats); //plot the statistical summary line chart of daily attendance 
+    //plotBarChart(simResultStats.meanDaily); //plot the bar charts of daily attendance by department - average
     //plot the histogram of simulations per day
     for (let i=0;i<days.length; i++ ) {
-        plotHistogram(days[i],simResultDetailed);
+        plotHistogram(days[i],simResultDetailed,"type1");
     }
+    //plot the histogram of ALL simulation regardless of days
+    plotHistogram('Daily Attendance Overall',simResultAllDays,"type2");
 }
+    
 
 function renderSummary(simResultStats) {
+    //run numbers on the input: total HC, number of people in each attendance category
+    let populationStats = calHeadcount();
+    let totalHC = populationStats.totalHC;
+    let hcPerCategory = populationStats.hcPerCategory;
+    
+    console.log(populationStats);
+
+    //clean elements before rendering the new results
+    let div = document.getElementById("box1Summary");
+    while (div.firstChild) {
+        div.removeChild(div.firstChild);
+    }
+
+    //render the numbers on the page
+    let ele = document.createElement("p");
+    let txt = document.createTextNode("Total Headcount is: " + totalHC);
+    ele.appendChild(txt);
+    div.appendChild(ele); 
+    //console.log(totalHC);
+
+    let txt2 = `Population Distribution in each Category:
+    1 Day/Week: ${hcPerCategory.$1DayPerWeek}; 
+    2 Days/Week: ${hcPerCategory.$2DayPerWeek}; 
+    3 Days/Week: ${hcPerCategory.$3DayPerWeek}; 
+    4 Days/Week: ${hcPerCategory.$4DayPerWeek}; 
+    5 Days/Week: ${hcPerCategory.$5DayPerWeek}; `
+    //console.log(txt2);
+
+    let ele2 = document.createElement("p");
+    let txt3 = document.createTextNode(txt2);
+    ele2.appendChild(txt3);
+    div.appendChild(ele2); 
 
 }
 
-
-
+//average daily attendance bar chart
+//chartjs charts
 function plotBarChart(arr) {
     const chartData = {
         type: 'bar',
@@ -490,20 +778,44 @@ function plotBarChart(arr) {
 
 }
 
-  
-function plotDailySummary(simResultDetailed) {
-    //calculate the medium, standard deviation, percentiles of the *Monday simulations*
-    let entriesMondaySort = [];
-    for (let i = 0; i< simResultDetailed.Monday.length; i++){
-        entriesMondaySort[i] = simResultDetailed.Monday[i];
-        entriesMondaySort.sort((a,b) => a-b);
+//stats summary chart w/ chart.js 
+function plotDailySummary(simResultDetailed,simResultStats) {
+    ////////
+    //this is new using the calculated mean and std passed from the calxxx function above//
+
+    let clStats = {
+        cl95min:[],
+        cl95max:[],
+        cl90min:[],
+        cl90max:[]
+    };
+    //simResultStats = {meanDaily:[],stdDaily:[]};
+    for (let i=0; i<5; i++) { //assuming 5 days -> 5 elements in the array, each representing a weekday
+        clStats.cl95min.push(Math.round(simResultStats.meanDaily[i]-1.96 * simResultStats.stdDaily[i]));
+        clStats.cl95max.push(Math.round(simResultStats.meanDaily[i]+1.96 * simResultStats.stdDaily[i]));
+        clStats.cl90min.push(Math.round(simResultStats.meanDaily[i]-1.65 * simResultStats.stdDaily[i]));
+        clStats.cl90max.push(Math.round(simResultStats.meanDaily[i]+1.65 * simResultStats.stdDaily[i]));
     }
+    console.log("Daily confidence level results are:", clStats);
+    ///this is the end of the new calculation section
+    ///////////
+
+
+    //calculate the medium, standard deviation, percentiles of the *Monday simulations*
+    let entriesMondaySort = getSortedArray(simResultDetailed.Monday);
     let statsOutput = getMeanAndStd(entriesMondaySort);
+
+    //calculate confidence interval
     const meanMonday = statsOutput.mean;
     const stdMonday = statsOutput.std;
+    //95% confidence level
+    const cl95MondayMin = meanMonday - stdMonday * 1.96; //1.96 ->95% internal, 1.65 -> 90% interval
+    const cl95MondayMax = meanMonday + stdMonday * 1.96;
+
+
     const mediumMonday = getPercentile(50, entriesMondaySort);
-    const p25Monday = getPercentile(25, entriesMondaySort);
-    const p75Monday = getPercentile(75, entriesMondaySort);
+    //const p25Monday = getPercentile(25, entriesMondaySort);
+    //const p75Monday = getPercentile(75, entriesMondaySort);
     const minMonday = entriesMondaySort[0];
     const maxMonday = entriesMondaySort[entriesMondaySort.length - 1];
     //console.log("Monday histogram array SORTED is:", entriesMondaySort);
@@ -518,6 +830,10 @@ function plotDailySummary(simResultDetailed) {
     statsOutput = getMeanAndStd(entriesTuesdaySort);
     const meanTuesday = statsOutput.mean;
     const stdTuesday = statsOutput.std;
+    //95% confidence level
+    const cl95TuesdayMin = meanTuesday - stdTuesday * 1.96;
+    const cl95TuesdayMax = meanTuesday + stdTuesday * 1.96;
+
     const mediumTuesday = getPercentile(50, entriesTuesdaySort);
     const p25Tuesday = getPercentile(25, entriesTuesdaySort);
     const p75Tuesday = getPercentile(75, entriesTuesdaySort);
@@ -535,6 +851,10 @@ function plotDailySummary(simResultDetailed) {
     statsOutput = getMeanAndStd(entriesWednesdaySort);
     const meanWednesday = statsOutput.mean;
     const stdWednesday = statsOutput.std;
+    //95% confidence level
+    const cl95WednesdayMin = meanWednesday - stdWednesday * 1.96;
+    const cl95WednesdayMax = meanWednesday + stdWednesday * 1.96;
+
     const mediumWednesday = getPercentile(50, entriesWednesdaySort);
     const p25Wednesday = getPercentile(25, entriesWednesdaySort);
     const p75Wednesday = getPercentile(75, entriesWednesdaySort);
@@ -552,6 +872,10 @@ function plotDailySummary(simResultDetailed) {
     statsOutput = getMeanAndStd(entriesThursdaySort);
     const meanThursday = statsOutput.mean;
     const stdThursday = statsOutput.std;
+    //95% confidence level
+    const cl95ThursdayMin = meanThursday - stdThursday * 1.96;
+    const cl95ThursdayMax = meanThursday + stdThursday * 1.96;
+
     const mediumThursday = getPercentile(50, entriesThursdaySort);
     const p25Thursday = getPercentile(25, entriesThursdaySort);
     const p75Thursday = getPercentile(75, entriesThursdaySort);
@@ -569,6 +893,10 @@ function plotDailySummary(simResultDetailed) {
     statsOutput = getMeanAndStd(entriesFridaySort);
     const meanFriday = statsOutput.mean;
     const stdFriday = statsOutput.std;
+    //95% confidence level
+    const cl95FridayMin = meanFriday - stdFriday * 1.96;
+    const cl95FridayMax = meanFriday + stdFriday * 1.96;
+
     const mediumFriday = getPercentile(50, entriesFridaySort);
     const p25Friday = getPercentile(25, entriesFridaySort);
     const p75Friday = getPercentile(75, entriesFridaySort);
@@ -583,10 +911,10 @@ function plotDailySummary(simResultDetailed) {
         data: {
             labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
             datasets: [
-                { label: "Mininum",  data: [minMonday, minTuesday, minWednesday, minThursday, minFriday], backgroundColor: "rgba(255, 159, 64, 0.2)", fill:false,borderWidth:1.25},
-                { label: "25th Percentile",  data: [p25Monday, p25Tuesday, p25Wednesday, p25Thursday, p25Friday], backgroundColor: "rgba(255, 159, 64, 0.2)", borderColor: 'orange', fill: '+1',borderWidth:1.25}, 
-                { label: "Median",  data: [mediumMonday, mediumTuesday, mediumWednesday, mediumThursday, mediumFriday], backgroundColor: "rgba(255, 159, 64, 0.2)", borderColor: '#0ba2e3', fill: "+1",borderWidth:1.5},
-                { label: "75th Percentile",  data: [p75Monday, p75Tuesday, p75Wednesday, p75Thursday, p75Friday], backgroundColor: "rgba(255, 159, 64, 0.2)", borderColor: 'orange', fill: false,borderWidth:1.25},
+                { label: "Mininum",  data: [minMonday, minTuesday, minWednesday, minThursday, minFriday], backgroundColor: "rgba(255, 159, 64, 0.2)", fill:'+4',borderWidth:1.25},
+                { label: "95% Confidence Interval",  data: [cl95MondayMin, cl95TuesdayMin, cl95WednesdayMin, cl95ThursdayMin, cl95FridayMin], backgroundColor: "rgba(255, 159, 64, 0.2)", borderColor: 'orange', fill: '+1',borderWidth:1.25}, 
+                { label: "Mean",  data: [mediumMonday, mediumTuesday, mediumWednesday, mediumThursday, mediumFriday], backgroundColor: "rgba(255, 159, 64, 0.2)", borderColor: 'orange', fill: "+1",borderWidth:4},
+                { label: "95% Confidence Interval",  data: [cl95MondayMax, cl95TuesdayMax, cl95WednesdayMax, cl95ThursdayMax, cl95FridayMax], backgroundColor: "rgba(255, 159, 64, 0.2)", borderColor: 'orange', fill: false,borderWidth:1.25},
                 { label: "Maximum",  data: [maxMonday, maxTuesday, maxWednesday, maxThursday, maxFriday], backgroundColor: "rgba(255, 159, 64, 0.2)", fill: false,borderWidth:1.25}
             ]
         },
@@ -609,12 +937,69 @@ function plotDailySummary(simResultDetailed) {
     }
     chartSummaryDailyAttendance = new Chart(ctx2, chartData2);
 
+    let div = document.getElementById("tableConfidenceLevel");
+    //clean elements before rendering the new results
+    while (div.firstChild) {
+        div.removeChild(div.firstChild);
+    }
+
+    //create the table of daily attendance
+    let headers = [" ","Peak attendance (97.5% of the time)","Expected attendance (50% of the time)"];
+    let rowheaders = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+
+    let tbl = document.createElement("table");
+    //create the head part of the table
+    let hd = document.createElement("thead");
+    let hrow = document.createElement("tr");
+    for (let i = 0; i< headers.length; i++) {
+        let headcell = document.createElement("th");
+        let headtext = document.createTextNode(headers[i]);
+        headcell.appendChild(headtext);
+        hrow.appendChild(headcell);
+    }
+    hd.appendChild(hrow);
+    tbl.appendChild(hd);
+
+    //create the body part of the table
+    let tbd = document.createElement("tbody");
+
+
+    for (let i=0; i<5; i++) {
+        let row = document.createElement("tr");
+        for (let j=0; j<3; j++) {
+            let bodycell = document.createElement("td");
+            let celltext="";
+            if (j == 0) {
+                celltext = document.createTextNode(rowheaders[i]);
+            } 
+            if (j == 1 ) {
+                celltext = document.createTextNode(clStats.cl95max[i]);
+            }
+            if (j ==2 ) {
+                celltext = document.createTextNode(simResultStats.meanDaily[i]);
+            }
+            bodycell.appendChild(celltext);
+            row.appendChild(bodycell);
+        }
+        tbd.appendChild(row);
+    }
+    tbl.appendChild(tbd);
+    div.appendChild(tbl);
+
 }
     
-   
-function plotHistogram(day, simResultDetailed) {
+
+//plotly charts
+function plotHistogram(day, simResultDetailed,plottype) {
+    let xvalues;
+    if (plottype == "type1") {
+        xvalues=simResultDetailed[day]; 
+    }
+    if (plottype == "type2") {
+        xvalues=simResultDetailed;
+    }
     let trace1 = {
-        x: simResultDetailed[day],
+        x: xvalues,
         type: 'histogram',
         marker: {
             color: "rgba(255, 100, 102, 0.7)", 
@@ -626,27 +1011,46 @@ function plotHistogram(day, simResultDetailed) {
         opacity: 0.5, 
       };
     let layout1 = {
-        title: "Simulation Result - "+day, 
+        title: day, 
         font:{
             family:'Roboto, Arial',
             size:8,
         },
         xaxis: {title: "Attendance"}, 
-        yaxis: {title: "Count of Frequency"},
+        yaxis: {title: "Frequency"},
         height:300,
+        //automargin:true
         margin: {
-            l: 10,
+            l: 30,
             r: 10,
-            b: 50,
+            b: 30,
             t: 50,
             pad: 2,
           },
+    };
+    let config = {
+        toImageButtonOptions: {
+          format: 'svg', // one of png, svg, jpeg, webp
+          filename: 'custom_image',
+          //height: 500,
+          //width: 700,
+          //scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
+        },
+        displaylogo: false,
+        modeBarButtonsToRemove: ['zoom2d', 'pan2d', 'select2d', 'lasso2d']
       };
 
     let data1 = [trace1];
-    let canvas=day+"Chart";
-    /*Plotly.newPlot(canvas,data1,layout1,{displaylogo: false, responsive: False});*/
-    Plotly.newPlot(canvas,data1,layout1,{displaylogo: false});
+    let canvas;
+    if (plottype == "type1") {
+        canvas=day+"Chart";
+        /*Plotly.newPlot(canvas,data1,layout1,{displaylogo: false, responsive: False});*/    
+    }
+    if (plottype == "type2") {
+        canvas="allDayChart";
+    }
+
+    Plotly.newPlot(canvas,data1,layout1,config);
 }
 
 
@@ -665,8 +1069,18 @@ function getMeanAndStd(arr){
     return mean_std;
 }
 
+function getSortedArray(arr) {
+    let sortedArr = [];
+    for (let i = 0; i< arr.length; i++){
+        sortedArr[i] = arr[i];
+        sortedArr.sort((a,b) => a-b);
+    }
+    return sortedArr
+}
+
 function getPercentile(percentile, arr) {
     //console.log("arr length is:", arr.length);
+
     let n = 0;
     if (percentile == 50) {
         if (arr.length % 2 == 0) {
