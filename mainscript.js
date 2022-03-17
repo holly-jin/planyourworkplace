@@ -14,7 +14,7 @@
 
 *******************************************************/
 
-//remember to change the parseInt to parseFloat for the weights in the currently disabled functions!!!!
+//remember to change the parseInt to parseFloat for the weights in the currently disabled functions
 
 const teamlist=[];
 let weights=[20,20,20,20,20];
@@ -30,19 +30,6 @@ document.querySelector(".addteam").addEventListener("click",createTeam); //when 
 document.getElementById("runSimulation").addEventListener("click",runAllSim); // when "run simulation" button is clicked
 //document.getElementById("btn_update").addEventListener("click",updateSettings);
 //document.getElementById("btn_setToDefault").addEventListener("click",defaultSettings);
-
-//create a listener when there is a change in the weights sliders in the overall settings
-//var ele_weightSlider = document.getElementsByClassName("weightSlider");
-//Array.prototype.forEach.call(ele_weightSlider, item => item.addEventListener("input",updateWeightsInput));
-
-//create a listener when there is a change in the weights in the overall settings
-//var ele_weightNumber = document.getElementsByClassName("weightNumber");
-//Array.prototype.forEach.call(ele_weightNumber, item => item.addEventListener("change",updateWeightsRange));
-
-//currently disabled because the inputs are removed
-//create a listener when there is a change in the weights sliders for the five days IN THE ADD TEAM
-//var ele_weightSliderTeam = document.getElementsByClassName("weightSliderTeam");
-//Array.prototype.forEach.call(ele_weightSliderTeam, item => item.addEventListener("input",updateWeightsInputTeam));
 
 //create a listener when there is a change in the weights for the five days IN THE ADD TEAM
 var ele_weightNumberTeam = document.getElementsByClassName("weightNumberTeam");
@@ -65,12 +52,15 @@ editTeamModal.addEventListener('show.bs.modal', function (event) {
         // 2. populate each input in the modal with the value from the team that we found in step 2    
         document.getElementById("inputTeamId").value = teamid;
         const team = getTeamById (teamid);
-        document.getElementById("inputName").value = team.teamname;
-        document.getElementById("inputSize").value = team.teamsize;
-        document.getElementById("inputNumDays").value = team.numdays;
-        document.getElementById("inputFrequency").value = team.frequency;
-        document.getElementById("inputNumDays").value = team.numdays;
-        //add weight preferences
+        document.getElementById("inputName").value = team.teamname; //name of the team, string
+        document.getElementById("inputSize").value = team.teamsize; //number of people in the team
+        document.getElementById("inputNumDays").value = team.numdays; //number of days coming in
+        document.getElementById("inputFrequency").value = team.frequency; //cadence, "every month", "every week"
+        const sliders = document.getElementsByClassName("weightSliderTeam"); //weights on each day, [1,1,1,1,1]
+        for (let i=0; i<sliders.length; i++){
+            sliders[i].value = team.weights[i];
+        }
+        
                
     }
     console.log("teamid",teamid);
@@ -85,101 +75,6 @@ function getTeamById (teamid) {
     } 
     return null;
 }
-
-// click the update button in the settings. currently disabled
-// function updateSettings(){
-//     const sliders = document.getElementsByClassName("weightSlider");
-//     const num = document.getElementById("inputNumSimulation");
-//     numSimulation = num.value;
-//     console.log(numSimulation);
-//     for (let i=0; i<sliders.length; i++){
-//         weights[i]= parseInt(sliders[i].value);
-//     }
-//     console.log(weights);
-// }
-
-//update all the settings to default - equal weights and 100 simulation. currently disabled. 
-// function defaultSettings(){
-//     numSimulation = 100;
-//     weights=[20,20,20,20,10];
-//     const sliders = document.getElementsByClassName("weightSlider");
-//     for (let i=0; i<sliders.length; i++){
-//         sliders[i].value = 20;
-//     }
-//     const inputnumbers = document.getElementsByClassName("weightNumber");
-//     for (let i=0; i<inputnumbers.length; i++){
-//         inputnumbers[i].value = 20;
-//     }
-//     document.getElementById("inputNumSimulation").value = 100;
-// }
-
-
-// currently disabled because the weights have been updated to team-specific
-// function updateWeightsInput(){
-//     const sliders = document.getElementsByClassName("weightSlider");
-//     const inputnumbers = document.getElementsByClassName("weightNumber");
-//     let sumPercentage = 0;
-//     var ele_message = document.getElementById("warning");
-//     //console.log(sliders);
-//     for (let i=0; i<sliders.length; i++){
-//         inputnumbers[i].value = sliders[i].value;
-//         //console.log(typeof sliders[i].value);
-//         sumPercentage+= parseInt(sliders[i].value);
-//         console.log(sumPercentage);
-//     }
-//     if (sumPercentage > 100 || sumPercentage < 100 ) {
-//         ele_message.style.visibility = 'visible';
-//     } 
-//     if (sumPercentage == 100) {
-//         ele_message.style.visibility = 'hidden';
-//     }
-// }
-
-// currently disabled because the weights have been updated to team-specific
-//update team information
-// function updateWeightsRange(){
-//     //console.log("input updated");
-//     const sliders = document.getElementsByClassName("weightSlider");
-//     const inputnumbers = document.getElementsByClassName("weightNumber");
-//     for (let i=0; i<inputnumbers.length; i++){
-//         sliders[i].value = inputnumbers[i].value
-//     }
-// }
-
-
-//update the numbers in input if the sliders are changed when adding/modifying a team
-// function updateWeightsInputTeam() {
-//     const sliders = document.getElementsByClassName("weightSliderTeam");
-//     const inputnumbers = document.getElementsByClassName("weightNumberTeam");
-//     let sumPercentage = 0;
-//     let ele_message = document.getElementById("warningTeam");
-
-//     for (let i=0; i<sliders.length; i++){
-//         inputnumbers[i].value = sliders[i].value;
-//         //console.log(typeof sliders[i].value);
-//         sumPercentage+= parseInt(sliders[i].value);
-  
-//     }
-//     if (sumPercentage > 100 || sumPercentage < 100 ) {
-//         ele_message.style.visibility = 'visible';
-//     } 
-//     if (sumPercentage == 100) {
-//         ele_message.style.visibility = 'hidden';
-//     }
-// }
-
-//update the numbers in input if the input fields are changed when adding/modifying a team
-//currently disabled because the input fields are removed and only sliders are available
-// function updateWeightsRangeTeam(){
-//     const sliders = document.getElementsByClassName("weightSliderTeam");
-//     const inputnumbers = document.getElementsByClassName("weightNumberTeam");
-//     for (let i=0; i<inputnumbers.length; i++){
-//         sliders[i].value = inputnumbers[i].value;
-//     }
-// }
-
-
-
 
 
 //clear the input values in the modal form
@@ -199,6 +94,7 @@ function createTeam(evt){
     
     if (document.getElementById("inputTeamId").value !== "") {
         console.log("We are about to edit a team");
+        
         // put editing code here
         // fetch the team and write in the object values of the team
         let team = getTeamById (parseInt(document.getElementById("inputTeamId").value));
@@ -217,6 +113,8 @@ function createTeam(evt){
         team.description.textContent = teamDescription;
         
         console.log("updated team is: ", team);
+        console.log("a sentence after the updated team is logged");
+        console.log("current updated team list is: ", teamlist);
         return;
     } 
 
@@ -332,29 +230,30 @@ function setSimNum(teamlist,numSimulation) {
         total+=team.teamsize;
         
     }
-    console.log("running setSimNum function, total HC is", total);
-    if (total > 500 && total <= 1000) {
-        numSimulation = 2000;
-        console.log("adjusted the simulation number to 100");
-    }
-    if (total > 1000) {
-        numSimulation = 500;
-        console.log("adjusted the simulation number to 50");
+    //console.log("running setSimNum function, total HC is", total);
+
+    if (total > 2000) {
+        numSimulation = 1000;
+        //console.log("adjusted the simulation number to 50");
     }
 }
 
+//need to edit to add monthly
 //calculate the population stats including total HC, people in each hybrid category
 function calHeadcount(){
     //calculat the total HC
     let totalHC=0; 
     //calculate HC in each hybrid category (1day/week,2days/week)
-    const hcPerCategory = {
-        $1DayPerWeek:0,
-        $2DayPerWeek:0,
-        $3DayPerWeek:0,
-        $4DayPerWeek:0,
-        $5DayPerWeek:0
-    }; 
+    
+    //create a dictionary of all frequency preferences: 3 + "every week" -> "3every week"
+    let preference;
+    let freqConv = {'every week':'Week','every month':'Month'}
+    let hcPerCategory = {};
+    for (i in teamlist) {
+        preference = teamlist[i].numdays + " Days/" + freqConv[teamlist[i].frequency] //5 Days/Month
+        hcPerCategory[preference]= 0;  
+    }
+
     console.log("begin to run the calHeadcount function");
     
     for (let i in teamlist) {
@@ -362,14 +261,11 @@ function calHeadcount(){
         let size = team.teamsize;
         totalHC+=size;
 
-        if (team.numdays == 1 && team.frequency == "every week") { hcPerCategory.$1DayPerWeek+=size }
-        if (team.numdays == 2 && team.frequency == "every week") { hcPerCategory.$2DayPerWeek+=size }
-        if (team.numdays == 3 && team.frequency == "every week") { hcPerCategory.$3DayPerWeek+=size }
-        if (team.numdays == 4 && team.frequency == "every week") { hcPerCategory.$4DayPerWeek+=size }
-        if (team.numdays == 5 && team.frequency == "every week") { hcPerCategory.$5DayPerWeek+=size }
+        preference = teamlist[i].numdays + " Days/" + freqConv[teamlist[i].frequency]
+        hcPerCategory[preference] +=size;
     }
-
     console.log("running the calHeadcount function, total HC is",totalHC);
+
     let output = {};
     output.totalHC = totalHC;
     output.hcPerCategory = hcPerCategory;
@@ -378,8 +274,8 @@ function calHeadcount(){
 }
 
 async function getSimResultsFromServer(teamlist, numofsimulation) {
-    // const url = 'http://127.0.0.1:3000/';
-    const url = 'https://j4.is/njs/';
+    const url = 'http://127.0.0.1:3000/'; //use this to test locally
+    //const url = 'https://j4.is/njs/';
     const response = await fetch(url, {
 	method: 'POST',
 	mode: 'cors', // no-cors, *cors, same-origin
@@ -426,217 +322,6 @@ async function runAllSim(){
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////
-//run the simulation algorithm and return the results "response"
-function runSimAlgorithm(args) {
-    let teamlist = args.teamlist;
-    let numSimulation = args.numofsimulation;
-
-    simNum = 0;
-    const simResult = {Monday:[], Tuesday:[], Wednesday:[], Thursday:[], Friday:[]};
-    //each day contains the list of results from all simulation
-
-    for (let i=0; i < numSimulation; i++) {
-        simNum+=1;
-        //accumulate the result for SimResult (overall count by day)
-        const output = runOneSim();
-        const oneSim = output.oneSimResult;
-        //accumulate the detailed result entry for SimResult (detailed count by day)     
-        simResult.Monday.push(oneSim.Monday);
-        simResult.Tuesday.push(oneSim.Tuesday);
-        simResult.Wednesday.push(oneSim.Wednesday);
-        simResult.Thursday.push(oneSim.Thursday);
-        simResult.Friday.push(oneSim.Friday);
-    }
-
-    let results = {};
-    results.simResult = simResult;
-    //results.simResultByTeam = [];
-
-    return results;
-}
-
-//runs one simluation of the whole population
-function runOneSim(){
-    const oneSimResult = {
-        Monday:0, Tuesday:0, Wednesday:0, Thursday:0, Friday:0
-    } //attendance on each day of the whole population per simulation
-    
-    let resultbyteam = [];
-    
-    let daylist = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
-    for (let eachteam in teamlist) {
-
-        eachteam = teamlist[eachteam];
-       
-        const numpeople = eachteam.teamsize;
-        let daysChosen;
-    
-        for (let i=0; i<numpeople; i++){
-            daysChosen = runOnePerson(eachteam); //array of days chosen by this person
-            //console.log("chosen day for this person is: " + daysChosen);
-            for (day in daysChosen) {
-                oneSimResult[daysChosen[day]]+=1; //result of attendence by day
-            }
-        }
-
-        /* original codes when the option only has "every week"
-        if (eachteam.frequency == "every week"){
-            for (let i=0; i<numpeople; i++){
-                daysChosen = runOnePerson_week(eachteam); //array of days chosen by this person
-                //console.log("chosen day for this person is: " + daysChosen);
-                for (day in daysChosen) {
-                    oneSimResult[daysChosen[day]]+=1; //result of attendence by day
-                }
-            }
-        }
-        */
-
-        //???
-        for (let i=0; i<daylist.length; i++){
-            let resultEntry = {};
-            //ResultEntry(teamid, teamname, day, attendence, simnum)
-            resultEntry.teamid = eachteam.id;
-            resultEntry.teamname = eachteam.teamname;
-            resultEntry.day = daylist[i];
-            resultEntry.attendence = oneSimResult[daylist[i]];
-            resultbyteam.push(resultEntry);
-        }
-    }
-    //console.log("result from one simultion" + oneSimResult);
-   
-    let output = {};
-    output.oneSimResult = oneSimResult;
-    output.resultbyteam = resultbyteam;
-    return output;
-}
-
-//original function -> only deals with weekly base
-//runs one simluation of an individual based on the factors: 1.how many days a week 2. weights
-function runOnePerson_week(eachteam){
-    //console.log("runOnePerson_Week function is running");
-
-    let chosenday;
-    let indChosen;
-    let weightsum;
-    const weights=eachteam.weights.slice();
-    let choicearr=["Monday","Tuesday","Wednesday","Thursday","Friday"];
-    const chosenarr=[];
-
-
-    //choose (number of days) times randomly to generate the chosen days for this employee
-    for (let i=0; i<eachteam.numdays ; i++){   
-        let cumweights=[];  
-
-        weightsum = weights.reduce((a,b)=>a+b,0); // consider looping
-
-        //create the accumulated weights array
-        for (let i=0;i<weights.length; i++) {     
-            let arr = weights.slice(0,i+1);
-            let cumsum = arr.reduce((a,b)=>a+b,0); 
-            cumweights[i] = cumsum;
-        }
-        //console.log("UNnormalized accumulated weight list is: ", cumweights);
-        
-        cumweights = cumweights.map(x => x / weightsum) //normalize the weighted choice to the sum of 1
-        //console.log("normalized accumulated weight list is: ", cumweights);
-
-        //generate a random number
-        const rdn = Math.random();
-
-        //choose the day to come in
-        //return the chosen day from the choicearr list
-        for (let i=0; i<cumweights.length;i++) {
-            if (i==0 && rdn < cumweights[i]){
-                chosenday = choicearr[i];
-                indChosen=i;
-                break;
-            }
-            if (rdn>= cumweights[i-1] && rdn < cumweights[i]){
-                chosenday = choicearr[i];
-                indChosen=i;
-                break;
-            }
-        }
-  
-        chosenarr.push(chosenday); //add the chosen day to the chosenarr list
-        choicearr = choicearr.filter (a => a!==chosenday); //remove the chosen day options from the arr
-        weights.splice(indChosen,1); //remove the weights of the chosen day from the weights array
-        
-        //console.log("update weighted choice list after one choice to :" + choicearr);
-        //console.log("update weighted choice list after one choice to :" + weights);
-    }
-    //console.log("chosen days for this person", chosenarr);
-    return chosenarr //return an array of the days chosen
-}
-
-//runs one simluation of an individual based on the factors: 1.how many days a week 2. weights
-function runOnePerson(eachteam){
-    //console.log("runOnePerson_Week function is running");
-
-    let chosenday;
-    let indChosen;
-    let weightsum;
-    const weights=eachteam.weights.slice();
-    let choicearr=["Monday","Tuesday","Wednesday","Thursday","Friday"];
-    const chosenarr=[];
-
-
-    //choose (number of days) times randomly to generate the chosen days for this employee
-    if (eachteam.frequency == "every week") {
-
-        for (let i=0; i<eachteam.numdays ; i++){   
-            let cumweights=[];    
-            weightsum = weights.reduce((a,b)=>a+b,0); // consider looping
-    
-            //create the accumulated weights array
-            for (let i=0;i<weights.length; i++) {     
-                let arr = weights.slice(0,i+1);
-                let cumsum = arr.reduce((a,b)=>a+b,0); 
-                cumweights[i] = cumsum;
-            }
-            //console.log("UNnormalized accumulated weight list is: ", cumweights);
-            
-            cumweights = cumweights.map(x => x / weightsum) //normalize the weighted choice to the sum of 1
-            //console.log("normalized accumulated weight list is: ", cumweights);
-    
-            //generate a random number
-            const rdn = Math.random();
-    
-            //choose the day to come in
-            //return the chosen day from the choicearr list
-            for (let i=0; i<cumweights.length;i++) {
-                if (i==0 && rdn < cumweights[i]){
-                    chosenday = choicearr[i];
-                    indChosen=i;
-                    break;
-                }
-                if (rdn>= cumweights[i-1] && rdn < cumweights[i]){
-                    chosenday = choicearr[i];
-                    indChosen=i;
-                    break;
-                }
-            }
-      
-            chosenarr.push(chosenday); //add the chosen day to the chosenarr list
-            choicearr = choicearr.filter (a => a!==chosenday); //remove the chosen day options from the arr
-            weights.splice(indChosen,1); //remove the weights of the chosen day from the weights array
-            
-            //console.log("update weighted choice list after one choice to :" + choicearr);
-            //console.log("update weighted choice list after one choice to :" + weights);
-        }
-
-    }
-    
-    //console.log("chosen days for this person", chosenarr);
-    return chosenarr //return an array of the days chosen
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-
-
 function calResponseResults(allResults) {
 
     //for reference global variable: days=["Monday","Tuesday","Wednesday","Thursday","Friday"]
@@ -673,7 +358,29 @@ function calResponseResults(allResults) {
      //    Monday:0, Tuesday:0, Wednesday:0, Thursday:0, Friday:0
      //}
 
-   
+
+    ////////
+    //this is new using the calculated mean and std. Old method is in the plotDailySummary function below.//
+
+    let clStats = {
+        cl95min:[],
+        cl95max:[],
+        cl90min:[],
+        cl90max:[]
+    };
+    //simResultStats = {meanDaily:[],stdDaily:[]};
+    for (let i=0; i<5; i++) { //assuming 5 days -> 5 elements in the array, each representing a weekday
+        clStats.cl95min.push(Math.round(simResultStats.meanDaily[i]-1.96 * simResultStats.stdDaily[i]));
+        clStats.cl95max.push(Math.round(simResultStats.meanDaily[i]+1.96 * simResultStats.stdDaily[i]));
+        clStats.cl90min.push(Math.round(simResultStats.meanDaily[i]-1.65 * simResultStats.stdDaily[i]));
+        clStats.cl90max.push(Math.round(simResultStats.meanDaily[i]+1.65 * simResultStats.stdDaily[i]));
+    }
+    console.log("Daily confidence level results are:", clStats);
+    ///this is the end of the new calculation section
+    ///////////
+
+
+    
     console.log("detailed result is: ", simResultDetailed);
     
     
@@ -682,7 +389,7 @@ function calResponseResults(allResults) {
     document.getElementById("sectionResultPreview").style.display="none";
     document.getElementById("sectionResult").style.display="flex";
 
-    renderResults(simResultStats,simResultDetailed,simResultAllDays) //call all the plotting functions
+    renderResults(simResultStats,simResultDetailed,simResultAllDays,clStats) //call all the plotting functions
 
 }
 
@@ -697,20 +404,21 @@ function changeVisibility(ele,option) {
 }
 */
 
-function renderResults(simResultStats,simResultDetailed,simResultAllDays){
-    renderSummary(simResultStats); //write in the summary stats in the first result section - average
-    plotDailySummary(simResultDetailed,simResultStats); //plot the statistical summary line chart of daily attendance 
+function renderResults(simResultStats,simResultDetailed,simResultAllDays,clStats){
+    renderSummary(simResultStats,clStats); //write in the summary stats in the first result section - average
+    plotDailySummary(simResultDetailed,simResultStats,clStats); //plot the statistical summary line chart of daily attendance 
     //plotBarChart(simResultStats.meanDaily); //plot the bar charts of daily attendance by department - average
     //plot the histogram of simulations per day
     for (let i=0;i<days.length; i++ ) {
         plotHistogram(days[i],simResultDetailed,"type1");
     }
+
     //plot the histogram of ALL simulation regardless of days
-    plotHistogram('Daily Attendance Overall',simResultAllDays,"type2");
+    //plotHistogram('Daily Attendance Overall',simResultAllDays,"type2");
 }
     
-
-function renderSummary(simResultStats) {
+//BOX 1
+function renderSummary(simResultStats,clStats) {
     //run numbers on the input: total HC, number of people in each attendance category
     let populationStats = calHeadcount();
     let totalHC = populationStats.totalHC;
@@ -724,25 +432,77 @@ function renderSummary(simResultStats) {
         div.removeChild(div.firstChild);
     }
 
-    //render the numbers on the page
+    const maxupper = Math.max(...clStats.cl95max);
+    console.log("busiest day's 97.5 upper limit is:",maxupper);
+    const index = clStats.cl95max.indexOf(maxupper);
+    const maxlower = clStats.cl95min[index];
+
+    let ele2 = document.createElement("div");
+    let txt2 = document.createTextNode(
+        `The expected attendance on the busiest days ranges from ${maxlower} to ${maxupper} with 95% confidence level, based on ${numSimulation} simulations.
+        Therefore, if you plan for a peak attendance of ${maxupper}, you will have enough capacity 97.5% of the time.`);
+    ele2.appendChild(txt2);
+    div.appendChild(ele2); 
+
+
+
+    //add the table of HC breakdown by frequency category
+    let div2 = document.getElementById("tableHCPerCategory");
+    //clean elements before rendering the new results
+    while (div2.firstChild) {
+        div2.removeChild(div2.firstChild);
+    }
+
+    //render the total headcount 
     let ele = document.createElement("p");
     let txt = document.createTextNode("Total Headcount is: " + totalHC);
     ele.appendChild(txt);
-    div.appendChild(ele); 
+    div2.appendChild(ele); 
     //console.log(totalHC);
 
-    let txt2 = `Population Distribution in each Category:
-    1 Day/Week: ${hcPerCategory.$1DayPerWeek}; 
-    2 Days/Week: ${hcPerCategory.$2DayPerWeek}; 
-    3 Days/Week: ${hcPerCategory.$3DayPerWeek}; 
-    4 Days/Week: ${hcPerCategory.$4DayPerWeek}; 
-    5 Days/Week: ${hcPerCategory.$5DayPerWeek}; `
-    //console.log(txt2);
+    //create the table 
+    let headers = [" ","Population"];
+    let rowheaders = [];
+    for (category in hcPerCategory) {
+        rowheaders.push(category);
+    }
 
-    let ele2 = document.createElement("p");
-    let txt3 = document.createTextNode(txt2);
-    ele2.appendChild(txt3);
-    div.appendChild(ele2); 
+    let tbl = document.createElement("table");
+    tbl.classList.add("table");
+    //tbl.classList.add("mx-md-5");
+    //create the head part of the table
+    let hd = document.createElement("thead");
+    let hrow = document.createElement("tr");
+    for (let i = 0; i< headers.length; i++) {
+        let headcell = document.createElement("th");
+        let headtext = document.createTextNode(headers[i]);
+        headcell.appendChild(headtext);
+        hrow.appendChild(headcell);
+    }
+    hd.appendChild(hrow);
+    tbl.appendChild(hd);
+
+    //create the body part of the table
+    let tbd = document.createElement("tbody");
+    for (let i=0; i<rowheaders.length; i++) {
+        let row = document.createElement("tr");
+        for (let j=0; j<2; j++) {
+            let bodycell = document.createElement("td");
+            let celltext="";
+            if (j == 0) {
+                celltext = document.createTextNode(rowheaders[i]);
+            } 
+            if (j == 1 ) {
+                celltext = document.createTextNode(hcPerCategory[rowheaders[i]]);
+            }
+            bodycell.appendChild(celltext);
+            row.appendChild(bodycell);
+        }
+        tbd.appendChild(row);
+    }
+    tbl.appendChild(tbd);
+    div2.appendChild(tbl);
+
 
 }
 
@@ -779,27 +539,10 @@ function plotBarChart(arr) {
 }
 
 //stats summary chart w/ chart.js 
-function plotDailySummary(simResultDetailed,simResultStats) {
-    ////////
-    //this is new using the calculated mean and std passed from the calxxx function above//
+function plotDailySummary(simResultDetailed,simResultStats,clStats) {
 
-    let clStats = {
-        cl95min:[],
-        cl95max:[],
-        cl90min:[],
-        cl90max:[]
-    };
-    //simResultStats = {meanDaily:[],stdDaily:[]};
-    for (let i=0; i<5; i++) { //assuming 5 days -> 5 elements in the array, each representing a weekday
-        clStats.cl95min.push(Math.round(simResultStats.meanDaily[i]-1.96 * simResultStats.stdDaily[i]));
-        clStats.cl95max.push(Math.round(simResultStats.meanDaily[i]+1.96 * simResultStats.stdDaily[i]));
-        clStats.cl90min.push(Math.round(simResultStats.meanDaily[i]-1.65 * simResultStats.stdDaily[i]));
-        clStats.cl90max.push(Math.round(simResultStats.meanDaily[i]+1.65 * simResultStats.stdDaily[i]));
-    }
-    console.log("Daily confidence level results are:", clStats);
-    ///this is the end of the new calculation section
-    ///////////
-
+    //this is the old way of calculating. 
+    //A new method using the calculated mean and std is in the calResponseResults function above ^ //
 
     //calculate the medium, standard deviation, percentiles of the *Monday simulations*
     let entriesMondaySort = getSortedArray(simResultDetailed.Monday);
@@ -948,6 +691,8 @@ function plotDailySummary(simResultDetailed,simResultStats) {
     let rowheaders = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
 
     let tbl = document.createElement("table");
+    tbl.classList.add("table");
+    tbl.classList.add("mt-md-3");
     //create the head part of the table
     let hd = document.createElement("thead");
     let hrow = document.createElement("tr");

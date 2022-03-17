@@ -14,7 +14,7 @@
 
 <body>
     <!-- menu bar -->
-    <nav class="navbar navbar-expand-lg navbar-light p-3 " style="border-bottom:1px solid rgb(212, 212, 212)">
+    <nav class="navbar navbar-expand-lg navbar-light p-3 " style="border-bottom:1px solid rgb(201, 201, 201)">
         <a class="navbar-brand" href="index.html" style="font-size: 1.2rem; font-weight:500; " >
             <img src="./UI/icon.svg" alt="" width="50" height="50" class="d-inline-block align-text-middle mx-2">
             Plan Your Workplace <sup style="color:rgb(248, 44, 44)">DEMO</sup>
@@ -47,7 +47,7 @@
 
                 <!--team info section-->
                 <div class="row my-2" id="teamInfoSection">
-                    <p style="margin-top:2rem; font-size:0.9rem;">YOUR TEAMS</p>
+                    <p style="margin-top:2rem; font-size:0.9rem; letter-spacing:0.05rem;">YOUR TEAMS</p>
                     <!-- Button trigger modal "Add Your Team"-->
                     <div class="addteamcontainer d-grid gap-2 mx-auto">
                         <button type="button" class="btn" id="btn_AddTeam" data-bs-toggle="modal" data-bs-target="#addTeamModal">
@@ -98,7 +98,6 @@
                                     <select class="custom-select mr-sm-2" id="inputFrequency" required>
                                     <option selected>every week</option>
                                     <option>every month</option>
-                                    <option>quarterly</option>
                                     </select>
 
                                     <div class="invalid-feedback">Please select a number of days.</div>
@@ -251,9 +250,6 @@
                 -->
 
 
-
-
-
                 <!--run simulation button-->
                 <!--<div class="d-grid gap-2 col-6 mt-4 mx-auto">-->
                 <div class="row mt-3">
@@ -264,17 +260,20 @@
 
 
             <!--RIGHT SIDE: results-->
-            <div class="col-md-9 pt-4 px-5">
+            <div class="col-md-9 pt-4 px-5" style="background-color: rgba(248, 238, 227, 0.2)">
 
                 <!--Landing page section-->
                 <div class="row" id="sectionLanding" style="height:90vh;">
-                    <div class="col-md-8" style="padding-top:2rem;">
+                    <div class="col-md-6 mx-5 mt-5" style="padding-top:2rem;">
+                        <!--
                         <p style="font-size:0.8rem; margin-bottom:0.2rem;">
                             PLAN CAPACITY FOR FUTURE WORKPLACE
                         </p>
-                        <h2>
-                            Simulate daily attendance to predict capacity needs.
-                        </h2>
+                        -->
+                        <h1 style="font-size:2rem; font-weight:400;">
+                            Simulate daily attendance to predict workplace capacity demand
+                        </h1>
+                        <!-- old intro paragraph
                         <p class="mt-5">
                             <span style="font-size:1.4rem;">Welcome! </span>
 
@@ -291,36 +290,47 @@
                             under development. 
                             
                             Please use this for test or demostration purposes only.
-                            <!--
-                            If you have any questions or wish to use this 
-                            tool for projects, please contact Holly Jin.
-                            -->
+                        </p>
+                        -->
+                        <p class="mt-5">
+                            <span style="font-size:1.4rem;">Welcome! </span>
+
+                            Plan Your Workplace uses monte carlo simulation to model daily workplace attendance to 
+                            help you make risk-based decisions and build confidence in your planning strategies.
+                            <br>You will be able to: </p>
+                            <ul>
+                                <li>Model hybrid attendance using employee survey data, policy, and leadership input</li>
+                                <li>Understand the range of possible attendance demand and daily variation</li>
+                            </ul>
+                            <p style="font-size:0.8rem; font-style:italic; color:rgb(252, 97, 35)">
+                            * This is the demo version.     
+                            Please use this for test or demostration purposes only.
                         </p>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-md-5">
                         
-                        <img src="demo_graph.png" alt="demo graph" style="width:100%" class="mt-5">
+                        <img src="./UI/demo_graph.svg" alt="demo graph" style="width:100%" class="mt-5">
                     </div>
 
-                    <div class="col-md-8">
+                    <div class="col-md-8 mx-5">
                         <h2 class="mt-5">FAQs</h2>
                         <br>
                         <h3>+ Why Simulation?</h3>
                         <p>
-                            Companies are moving away from the full-time in-office model and adopting various degree of hybrid work.
-                            The workplace must evolve to meet the dynamic needs of how we work in the future.
-                            <br>The first step in planning the future workplace is to understand the capacity demand.
-                            Unfortunately, historical knowledge is no longer the best indicator of how frequently employees will attend the workplace.
-                            Building probabilistic models to simulate workplace attendance allows us to forecast the future attendance.
+                            As companies adopt various degree of hybrid work,
+                            workplace must evolve to meet the dynamic needs of how we work in the future.
+                            The first step in planning the future workplace is to understand the capacity demand.
+                            Unfortunately, historical knowledge and benchmarking is no longer the best indicator of how employees will attend the workplace.
+                            Building probabilistic models to simulate workplace attendance allows us to forecast the future attendance and make informed decisions.
                         </p>
 
                         <h3>+ How does it work?</h3>
                         <p>
                             <ol>
                                 <li>
-                                    Model individual's attendance behaviors based on input (i.e. days/week in the office, 
-                                    likelihood on attending on each day, etc.) to model “real world” behavior.
+                                    Model individual's attendance behaviors based on input (i.e. number of days per week in the office, 
+                                    day-of-week preferences, etc.) to simulate “real world” behavior.
                                 </li>
                                 <li>
                                     Simulate attendance behaviors based on individuals' choices and 
@@ -339,12 +349,8 @@
                             
                         </p>
 
-                        <h3>+ How can I use the results?</h3>
-                        <p>
-                            How the results can be used will vary case by case.
-                        </p>
                     </div>
-
+                    <!--
                     <div class="col-md-12" style="font-size:0.9rem">
                         <div class="row">
                             <div class="col">x</div>
@@ -352,54 +358,68 @@
                             <div class="col">x</div>
                         </div>
                     </div>
+                    -->
                 </div>
 
                 <!--before simulation result preview section-->
-                <div class="row" id="sectionResultPreview" style="display:none">
-                    <p><br>Simulation Results<p>
-                    
-                    <div class="col-md-12 mt-0 mb-3 resultPreviewFrame">
-                        <h3>Summary</h3>
-                        <p class="text-resultpreview">Expected attendance review will show up here.</p>
+                <div class="row" id="sectionResultPreview" style="display:none; ">
+                    <p class="mx-md-5" style="letter-spacing:0.05rem"><br>SIMULATION RESULTS<p>
+                    <div class="row">
+                        <div class="col mx-md-5 mt-0 mb-3 resultPreviewFrame" style="height:200px">
+                            <h3>Overview</h3>
+                            <p class="text-resultpreview">Expected attendance review will show up here.</p>
+                        </div>
                     </div>
-                    <div class="col-md-12 my-3 resultPreviewFrame" style="height:200px">
-                        <h3>Simulation Overview</h3>
-                        <p class="text-resultpreview">Overview of daily attendance results will show up here.</p>
+                    <div class="row">
+                        <div class="col mx-md-5 my-3 resultPreviewFrame" style="height:200px">
+                            <h3>Simulation Overview</h3>
+                            <p class="text-resultpreview">Overview of daily attendance results will show up here.</p>
+                        </div>
                     </div>
-                    <div class="col-md-12 my-3 resultPreviewFrame">
-                        <h3>Daily Attendance</h3>
-                        <p class="text-resultpreview">Overview of daily attendance results will show up here.</p>
+                    <div class="row">
+                        <div class="col mx-md-5 my-3 resultPreviewFrame" style="height:200px">
+                            <h3>Daily Attendance</h3>
+                            <p class="text-resultpreview">Overview of daily attendance results will show up here.</p>
+                        </div>
                     </div>
                 </div>
                 
                 <!--simulation result-->
                 <div class="row" id="sectionResult" style="display:none">
                    
-                    <p><br>Simulation Results<p>
-
-                    <div class="col-md-12 mt-0 mb-3 p-4 resultFrame">
-                        <h3 style="border-bottom:1px solid rgb(73, 73, 73)">Summary</h3>
-                        <p class="text-help">How should I intepret this?</p>
-                        <div id="box1Summary">
-
+                    <p class="mx-md-5" style="letter-spacing:0.05rem"><br>SIMULATION RESULTS<p>
+                    <!--Box 1 -->
+                    <div class="row">
+                        <div class="col mx-md-5 mt-0 mb-3 p-4 resultFrame">
+                            <!--<h3 style="border-bottom:1px solid rgb(73, 73, 73)">Summary</h3>-->
+                            <h3 class="mb-3">Overview</h3>
+                            <!--<p class="text-help">How should I intepret this?</p>-->
+                            <div style="font-size:1rem;" id="box1Summary"></div>
                         </div>
-                        <p>
-                            [ ] and [ ] will likely see the highest attendance. <br>
-                            Expected attendance on the busiest day is [result]  +/- [result] with 95% confidence based on [result] simulations. <br>
-                            If you plan for a peak attendance of [result], you will have enough capacity 97.5% of time. <br>
-                        </p>
                     </div>
 
-                    <div class="col-md-12 my-3 p-4 resultFrame">
-                        <div class="row">
-                            <h3>Simulation Overview</h3>
-                            <div class="col-8">
-                                <canvas class="my-4" id="statChart" width="300" height="160"></canvas>
-                            </div>
-                            <div class="col-4" id="tableConfidenceLevel">
-                                table
-                            </div>
-                        </div>             
+                    <!--Box 2 -->
+                    <div class="row">
+                        <div class="col mx-md-5 my-3 p-4 resultFrame">
+                            <h3 class="mb-3">Population Detail</h3>
+                            <!--<p class="text-help">How should I intepret this?</p>-->
+                            <div id="tableHCPerCategory"></div>
+                        </div>
+                    </div>
+                
+                    <!--Box 3-->
+                    <div class="row">
+                        <div class="col mx-md-5 my-3 p-4 resultFrame">
+                            <div class="row">
+                                <h3>Simulation Overview</h3>
+                                <div class="col-8">
+                                    <canvas class="my-4" id="statChart" width="300" height="160"></canvas>
+                                </div>
+                                <div class="col-4" id="tableConfidenceLevel" style="font-size:0.9rem;">
+                                    table
+                                </div>
+                            </div>             
+                        </div>
                     </div>
 
                     <!-- plot the bar chart section
@@ -417,29 +437,33 @@
                     </div>
                     -->
 
-                    <div class="col-md-12 my-3 p-4 resultFrame">
-                        <h3>Daily Simulation Details</h3>
-                        <div class="row">
-                            <div class="col">
-                                <div class="chartcanvas" id="MondayChart"  width="100vw" height="200"></div>
-                            </div>
-                            <div class="col">
-                                <div class="chartcanvas" id="TuesdayChart"></div>
-                            </div>
-                            <div class="col">
-                                <div class="chartcanvas" id="WednesdayChart"></div>
-                            </div>
-                            <div class="col">
-                                <div class="chartcanvas" id="ThursdayChart"></div>
-                            </div>
-                            <div class="col">
-                                <div class="chartcanvas" id="FridayChart"></div>
-                            </div>
+                    <!--Box 4-->
+                    <div class="row">
+                        <div class="col mx-md-5 my-3 p-4 resultFrame">
+                            <h3>Daily Simulation Details</h3>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="chartcanvas" id="MondayChart"  width="100vw" height="200"></div>
+                                </div>
+                                <div class="col">
+                                    <div class="chartcanvas" id="TuesdayChart"></div>
+                                </div>
+                                <div class="col">
+                                    <div class="chartcanvas" id="WednesdayChart"></div>
+                                </div>
+                                <div class="col">
+                                    <div class="chartcanvas" id="ThursdayChart"></div>
+                                </div>
+                                <div class="col">
+                                    <div class="chartcanvas" id="FridayChart"></div>
+                                </div>
 
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-md-12 my-3 p-4 resultFrame">
+                    <!--
+                    <div class="col-md mx-md-5 my-3 p-4 resultFrame">
                         <h3>Overall Simulation Details</h3>
                         <div class="row">
                             <div class="col">
@@ -447,7 +471,7 @@
                             </div>
                         </div>
                     </div>
-                
+                    -->
                 </div>
                
                 
