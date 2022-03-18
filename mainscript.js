@@ -274,8 +274,8 @@ function calHeadcount(){
 }
 
 async function getSimResultsFromServer(teamlist, numofsimulation) {
-    const url = 'http://127.0.0.1:3000/'; //use this to test locally
-    //const url = 'https://j4.is/njs/';
+    //const url = 'http://127.0.0.1:3000/'; //use this to test locally
+    const url = 'https://j4.is/njs/';
     const response = await fetch(url, {
 	method: 'POST',
 	mode: 'cors', // no-cors, *cors, same-origin
